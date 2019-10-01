@@ -188,10 +188,3 @@ class QueueBot:
         userID = self.client.user.id
         line = '=' * max(len(userName), len(str(userID)))
         return f'{line}\nLogged in as...\n{userName}\n{userID}\n{line}'
-
-def main():
-    try:
-        client = discord.Client()
-        qBot = QueueBot(TOKEN)
-    except KeyboardInterrupt:
-        exit()
