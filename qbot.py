@@ -11,6 +11,7 @@ LOGO_COLOR = 0xF4B903
 THUMBNAIL = 'https://i.imgur.com/5v6mLwb.png'
 POPFLASH_URL = 'https://popflash.site/scrim/'
 MAP_POOL = ['Cache', 'Cobblestone', 'Dust II', 'Inferno', 'Mirage', 'Nuke', 'Overpass', 'Train', 'Vertigo']
+GITHUB = 'github.com/cameronshinn/csgo-queue-bot'
 
 class QueueGuild:
     def __init__(self, guild):
@@ -66,7 +67,7 @@ class QueueGuild:
     def aboutEmbed(self):
         embed = discord.Embed(title='__10-ManQ Queue Bot__', description='The definitive bot for setting up 10-man lobbies', color=self.color)
         embed.set_thumbnail(url=self.thumbnailUrl)
-        embed.add_field(name='This bot was made to give CS:GO players a convenient way to find Discord server members who want to play in-house pickup games', value='Made by Cameron Shinn', inline=False)
+        embed.add_field(name='This bot was made to give CS:GO players a convenient way to find Discord server members who want to play in-house pickup games', value='github.com/cameronshinn/csgo-queue-bot', inline=False)
         return embed
 
     async def join_command(self, message):
