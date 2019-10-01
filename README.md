@@ -1,5 +1,4 @@
-# csgo-queue-bot ![Alt][1]
-[1]: https://i.imgur.com/5v6mLwb.png "Icon"
+# csgo-queue-bot
 *A Discord bot to manage and setup CS:GO games*
 
 This program uses the Discord Python API to manage a bot that manages queues of CS:GO players who want to play against other Discord guild members.
