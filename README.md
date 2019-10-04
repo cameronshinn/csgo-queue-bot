@@ -14,3 +14,5 @@ This program uses the Discord Python API to manage a bot that manages queues of 
 7. `q!draft`:     Start (or restart) a map draft
 8. `q!ban <map>`: Ban the specified map from the map draft
 9. `q!about`:     Display information about the 10-ManQ bot
+
+[Icon saved here](https://i.imgur.com/5v6mLwb.png)
