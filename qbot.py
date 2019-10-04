@@ -42,7 +42,7 @@ class QueueGuild:
         embed.add_field(name='`q!empty`', value='Empty the queue', inline=False)
         embed.add_field(name='`q!popflash`', value='Link this server\'s designated Popflash lobby', inline=False)
         embed.add_field(name='`q!draft`', value='Start (or restart) a map draft', inline=False)
-        embed.add_field(name='`q!ban <map>`', value='Ban the specified map from the map draft', inline=False)
+        embed.add_field(name='`q!ban <map/number>`', value='Ban the specified map from the map draft', inline=False)
         embed.add_field(name='`q!about`', value='Display information about the 10-ManQ bot', inline=False)
         return embed
 
@@ -125,20 +125,25 @@ class QueueGuild:
 
     async def draft_command(self, message):
         self.mapsLeft = copy.copy(self.mapPool) # Need to copy to preseve the original map pool
-        mapsLeftStr = ''.join(f'{m}\n' for m in self.mapsLeft)
+        mapsLeftStr = ''.join(f'{i}. {m}\n' for i, m in enumerate(self.mapsLeft, 1)) # TODO: Add support for command
         embed = discord.Embed(title=f'Draft has begun!', description=mapsLeftStr, color=self.color)
         await message.channel.send(embed=embed)
 
     async def ban_command(self, message):
         csMap = message.content.split(' ', 1)[1]
+
+        if csMap.isdigit() and int(csMap) > 0 and int(csMap) <= len(self.mapPool):
+            i = int(csMap)
+            csMap = self.mapPool[i - 1]
+
         if self.mapsLeft == None:
             embed = discord.Embed(title='Map draft has not started!', color=self.color)
         elif csMap in self.mapsLeft:
             self.mapsLeft.remove(csMap)
-            mapsLeftStr = ''.join([f'{m}\n' if m in self.mapsLeft else f'~~{m}~~\n' for m in self.mapPool])
+            mapsLeftStr = ''.join([f'{i}. {m}\n' if m in self.mapsLeft else f'{i}. ~~{m}~~\n' for i, m in enumerate(self.mapPool, 1)])
             embed = discord.Embed(title=f'{csMap} has been banned', description=mapsLeftStr, color=self.color)
         elif csMap in self.mapPool:
-            mapsLeftStr = ''.join([f'{m}\n' if m in self.mapsLeft else f'~~{m}~~\n' for m in self.mapPool])
+            mapsLeftStr = ''.join([f'{i}. {m}\n' if m in self.mapsLeft else f'{i}. ~~{m}~~\n' for i, m in enumerate(self.mapPool, 1)])
             embed = discord.Embed(title=f'{csMap} has already been banned', description=mapsLeftStr, color=self.color)
         else:
             embed = discord.Embed(title=f'{csMap} is not a map', color=self.color)
