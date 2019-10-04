@@ -110,7 +110,6 @@ class QueueGuild:
             for user in self.queue:
                 userMentions += user.mention + ' '
             
-            self.queue.clear()
             await message.channel.send(userMentions, embed=self.popflashEmbed)
 
     async def leave_command(self, message):
