@@ -161,7 +161,7 @@ class QueueGuild:
 
         if self.mapsLeft == None: # Will only ever be None when there's no active map draft
             embed = discord.Embed(title='Map draft has not started!', color=self.color)
-        elif csMap.lower in self.mapsLeft: # Remove map from remaining
+        elif csMap in self.mapsLeft: # Remove map from remaining
             self.mapsLeft.remove(csMap)
             mapsLeftStr = ''.join([f'{i}. {m}\n' if m in self.mapsLeft else f'{i}. ~~{m}~~\n' for i, m in enumerate(self.mapPool, 1)])
             embed = discord.Embed(title=f'{csMap} has been banned', description=mapsLeftStr, color=self.color)
