@@ -23,7 +23,7 @@ class QueueGuild:
                                'q!view':     self.view_command,
                                'q!empty':    self.empty_command,
                                'q!popflash': self.popflash_command,
-                               'q!draft':    self.draft_command,
+                               'q!mdraft':   self.mdraft_command,
                                'q!ban':      self.ban_command,
                                'q!about':    self.about_command }
         self.thumbnailUrl = THUMBNAIL
@@ -40,7 +40,7 @@ class QueueGuild:
         embed.add_field(name='`q!view`', value='Display who is currently in the queue', inline=False)
         embed.add_field(name='`q!empty`', value='Empty the queue', inline=False)
         embed.add_field(name='`q!popflash`', value='Link this server\'s designated Popflash lobby', inline=False)
-        embed.add_field(name='`q!draft`', value='Start (or restart) a map draft', inline=False)
+        embed.add_field(name='`q!mdraft`', value='Start (or restart) a map draft', inline=False)
         embed.add_field(name='`q!ban <map/number>`', value='Ban the specified map from the map draft', inline=False)
         embed.add_field(name='`q!about`', value='Display information about the 10-ManQ bot', inline=False)
         return embed
@@ -123,7 +123,7 @@ class QueueGuild:
     async def popflash_command(self, message):
         await message.channel.send(embed=self.popflashEmbed)
 
-    async def draft_command(self, message):
+    async def mdraft_command(self, message):
         self.mapsLeft = copy.copy(self.mapPool) # Need to copy to preseve the original map pool
         mapsLeftStr = ''.join(f'{i}. {m}\n' for i, m in enumerate(self.mapsLeft, 1))
         embed = discord.Embed(title=f'Draft has begun!', description=mapsLeftStr, color=self.color)
@@ -139,7 +139,7 @@ class QueueGuild:
 
         if self.mapsLeft == None: # Will only ever be None when there's no active draft
             embed = discord.Embed(title='Map draft has not started!', color=self.color)
-        elif csMap in self.mapsLeft: # Remove map from remaining
+        elif csMap.lower in self.mapsLeft: # Remove map from remaining
             self.mapsLeft.remove(csMap)
             mapsLeftStr = ''.join([f'{i}. {m}\n' if m in self.mapsLeft else f'{i}. ~~{m}~~\n' for i, m in enumerate(self.mapPool, 1)])
             embed = discord.Embed(title=f'{csMap} has been banned', description=mapsLeftStr, color=self.color)
