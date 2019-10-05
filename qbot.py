@@ -178,12 +178,12 @@ class QueueGuild:
         await message.channel.send(embed=embed)
 
     async def pdraft_command(self, message):
-        if not len(self.queue) == self.spaces: # Queue isn't full
-            embed = discord.Embed(title=f'Cannot start player draft until the queue is full! _({len(self.queue)}/{self.spaces})_', color=self.color)
-        else:
-            self.playersLeft = copy.copy(self.queue) # Copy so we don't modify the queue
-            playersLeftStr = ''.join(f'{i}. {p}\n' for i, p in enumerate(self.playersLeft, 1))
-            embed = discord.Embed(title='Player draft has begun!', description=self.pdraftStr, color=self.color)
+        # if not len(self.queue) == self.spaces: # Queue isn't full
+        #     embed = discord.Embed(title=f'Cannot start player draft until the queue is full! _({len(self.queue)}/{self.spaces})_', color=self.color)
+        # else:
+        self.playersLeft = copy.copy(self.queue) # Copy so we don't modify the queue
+        playersLeftStr = ''.join(f'{i}. {p}\n' for i, p in enumerate(self.playersLeft, 1))
+        embed = discord.Embed(title='Player draft has begun!', description=self.pdraftStr, color=self.color)
 
         await message.channel.send(embed=embed)
 
@@ -196,7 +196,7 @@ class QueueGuild:
             embed = discord.Embed(title='You cannot pick a player unless you are in the queue!', color=self.color)
         elif not playerNum.isdigit() or not (int(playerNum) > 0 and int(playerNum) <= len(self.playersLeft)):
             embed = discord.Embed(title=f'{playerNum} is not a player!', description=self.pdraftStr, color=self.color)
-        elif message.author in (p for p in (self.teams[t] for t in self.teams.keys())): # Check if they are in a team
+        elif message.author in (p for t in self.teams.values() for p in t): # Check if they are in a team
             for team in self.teams.keys(): # Iterate through teams
                 if message.author in self.teams[team]: # If picker in this team
                     self.teams[team].append(self.playersLeft.pop(int(playerNum) - 1)) # Add player pick to picker's team
@@ -207,6 +207,7 @@ class QueueGuild:
         else: # Create new team with picker and pickee
             teamName = 'Team ' + str(message.author.display_name)
             self.teams.update({teamName: [message.author, self.playersLeft.pop(int(playerNum) - 1)]})
+            self.playersLeft.remove(message.author) # Need to remove picker since we can't pop sender without knowing their index
             embed = discord.Embed(title=f'**{teamName}** has picked **{self.teams[teamName][-1].display_name}**', description=self.pdraftStr, color=self.color)
 
         if self.playersLeft != None and len(self.playersLeft) == 1:
