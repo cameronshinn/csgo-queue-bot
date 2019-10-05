@@ -196,7 +196,7 @@ class QueueGuild:
             embed = discord.Embed(title='You cannot pick a player unless you are in the queue!', color=self.color)
         elif not playerNum.isdigit() or not (int(playerNum) > 0 and int(playerNum) <= len(self.playersLeft)):
             embed = discord.Embed(title=f'{playerNum} is not a player!', description=self.pdraftStr, color=self.color)
-        elif message.author in (p for p in self.teams[t] for t in self.teams.keys()): # Check if they are in a team
+        elif message.author in (p for p in (self.teams[t] for t in self.teams.keys())): # Check if they are in a team
             for team in self.teams.keys(): # Iterate through teams
                 if message.author in self.teams[team]: # If picker in this team
                     self.teams[team].append(self.playersLeft.pop(int(playerNum) - 1)) # Add player pick to picker's team
