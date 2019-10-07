@@ -197,12 +197,12 @@ class QueueGuild:
         await message.channel.send(embed=embed)
 
     async def pdraft_command(self, message):
-        # if not len(self.queue) == self.spaces: # Queue isn't full
-        #     embed = discord.Embed(title=f'Cannot start player draft until the queue is full! _({len(self.queue)}/{self.spaces})_', color=self.color)
-        # else:
-        self.players_left = copy.copy(self.queue) # Copy so we don't modify the queue
-        players_leftStr = ''.join(f'{i}. {p}\n' for i, p in enumerate(self.players_left, 1))
-        embed = discord.Embed(title='Player draft has begun!', description=self.pdraft_str, color=self.color)
+        if not len(self.queue) == self.spaces: # Queue isn't full
+            embed = discord.Embed(title=f'Cannot start player draft until the queue is full! _({len(self.queue)}/{self.spaces})_', color=self.color)
+        else:
+            self.players_left = copy.copy(self.queue) # Copy so we don't modify the queue
+            players_leftStr = ''.join(f'{i}. {p}\n' for i, p in enumerate(self.players_left, 1))
+            embed = discord.Embed(title='Player draft has begun!', description=self.pdraft_str, color=self.color)
 
         await message.channel.send(embed=embed)
 
