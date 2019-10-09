@@ -52,17 +52,17 @@ class QueueGuild:
     @property
     def help_embed(self):
         embed = discord.Embed(title='__Queue Commands__', color=self.color)
-        embed.add_field(name='`q!help`', value='Display help message page', inline=False)
-        embed.add_field(name='`q!join`', value='Join the queue', inline=False)
-        embed.add_field(name='`q!leave`', value='Leave the queue', inline=False)
-        embed.add_field(name='`q!view`', value='Display who is currently in the queue', inline=False)
-        embed.add_field(name='`q!empty`', value='Empty the queue', inline=False)
-        embed.add_field(name='`q!popflash`', value='Link this server\'s designated PopFlash lobby', inline=False)
-        embed.add_field(name='`q!mdraft`', value='Start (or restart) a map draft', inline=False)
-        embed.add_field(name='`q!ban <map/number>`', value='Ban the specified map from the map draft', inline=False)
-        embed.add_field(name='`q!pdraft`', value='Start (or restart) a player draft', inline=False)
-        embed.add_field(name='`q!pick <number>`', value='Pick a player for your team', inline=False)
-        embed.add_field(name='`q!about`', value='Display information about the 10-ManQ bot', inline=False)
+        embed.add_field(name='**q!help**', value='_Display help message page_', inline=False)
+        embed.add_field(name='**q!join**', value='_Join the queue_', inline=False)
+        embed.add_field(name='**q!leave**', value='_Leave the queue_', inline=False)
+        embed.add_field(name='**q!view**', value='_Display who is currently in the queue_', inline=False)
+        embed.add_field(name='**q!empty**', value='_Empty the queue_', inline=False)
+        embed.add_field(name='**q!popflash**', value='_Link this server\'s designated PopFlash lobby_', inline=False)
+        embed.add_field(name='**q!mdraft**', value='_Start (or restart) a map draft_', inline=False)
+        embed.add_field(name='**q!ban <map/number>**', value='_Ban the specified map from the map draft_', inline=False)
+        embed.add_field(name='**q!pdraft**', value='_Start (or restart) a player draft_', inline=False)
+        embed.add_field(name='**q!pick <number>**', value='_Pick a player for your team_', inline=False)
+        embed.add_field(name='**q!about**', value='_Display information about the 10-ManQ bot_', inline=False)
         return embed
 
     @property
