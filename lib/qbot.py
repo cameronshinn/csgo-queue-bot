@@ -45,6 +45,10 @@ class QueueGuild:
         self.thumbnail_url = THUMBNAIL
         self.color = LOGO_COLOR
 
+    @staticmethod
+    def warning_message(str_in):
+        return f':warning:  {str_in}  :warning:'
+
     @property
     def help_embed(self):
         embed = discord.Embed(title='__Queue Commands__', color=self.color)
@@ -103,9 +107,9 @@ class QueueGuild:
 
     async def join_command(self, message):
         if message.author in self.queue: # User already in queue
-            embed = discord.Embed(title=f'**{message.author.display_name}** is already in the queue', color=self.color)
-        if len(self.queue) >= self.spaces: # Queue full
-            embed = discord.Embed(title=f'Unable to add **{message.author.display_name}**\nQueue is full _({len(self.queue)}/{self.spaces})_', color=self.color)
+            embed = discord.Embed(title=self.warning_message(f'**{message.author.display_name}** is already in the queue'), color=self.color)
+        elif len(self.queue) >= self.spaces: # Queue full
+            embed = discord.Embed(title=self.warning_message(f'Unable to add **{message.author.display_name}**\nQueue is full _({len(self.queue)}/{self.spaces})_'), color=self.color)
         else: # Space available and not already in queue
             self.queue.append(message.author)
             embed = discord.Embed(title=f'**{message.author.display_name}** has been added to the queue _({len(self.queue)}/{self.spaces})_', color=self.color)
@@ -126,7 +130,7 @@ class QueueGuild:
             self.queue.remove(message.author)
             embed = discord.Embed(title=f'**{message.author.display_name}** has been removed from the queue _({len(self.queue)}/{self.spaces})_', color=self.color)
         else:
-            embed = discord.Embed(title=f'**{message.author.display_name}** was never in the queue', color=self.color)
+            embed = discord.Embed(title=self.warning_message(f'**{message.author.display_name}** was never in the queue'), color=self.color)
 
         await message.channel.send(embed=embed)
 
@@ -173,9 +177,8 @@ class QueueGuild:
                     map_pick = m
                     break
 
-
         if self.maps_left == None: # Will only ever be None when there's no active map draft
-            embed = discord.Embed(title='Map draft has not started!', color=self.color)
+            embed = discord.Embed(title=self.warning_message('Map draft has not started!'), color=self.color)
         elif map_pick in self.maps_left: # Remove map from remaining
             self.maps_left.remove(map_pick)
             maps_left_str = ''.join([f'{i}. {m.name}\n' if m in self.maps_left else f'{i}. ~~{m.name}~~\n' for i, m in enumerate(self.map_pool, 1)])
@@ -183,10 +186,10 @@ class QueueGuild:
             embed.set_thumbnail(url=map_pick.image_url)
         elif map_pick in self.map_pool: # Otherwise map must already be banned
             maps_left_str = ''.join([f'{i}. {m.name}\n' if m in self.maps_left else f'{i}. ~~{m.name}~~\n' for i, m in enumerate(self.map_pool, 1)])
-            embed = discord.Embed(title=f'**{map_pick.name}** has already been banned', description=maps_left_str, color=self.color)
+            embed = discord.Embed(title=self.warning_message(f'**{map_pick.name}** has already been banned'), description=maps_left_str, color=self.color)
             embed.set_thumbnail(url=map_pick.image_url)
         else: # Otherwise input is not map
-            embed = discord.Embed(title=f'{map_pick} is not a map', color=self.color)
+            embed = discord.Embed(title=self.warning_message(f'{map_pick} is not a map'), color=self.color)
 
         if self.maps_left != None and len(self.maps_left) == 1: # End draft when no choices left
             embed = discord.Embed(title=f'We\'re going to **{self.maps_left[0].name}**!', color=self.color)
@@ -198,7 +201,7 @@ class QueueGuild:
 
     async def pdraft_command(self, message):
         if not len(self.queue) == self.spaces: # Queue isn't full
-            embed = discord.Embed(title=f'Cannot start player draft until the queue is full! _({len(self.queue)}/{self.spaces})_', color=self.color)
+            embed = discord.Embed(title=self.warning_message(f'Cannot start player draft until the queue is full! _({len(self.queue)}/{self.spaces})_'), color=self.color)
         else:
             self.players_left = copy.copy(self.queue) # Copy so we don't modify the queue
             players_leftStr = ''.join(f'{i}. {p}\n' for i, p in enumerate(self.players_left, 1))
@@ -210,11 +213,11 @@ class QueueGuild:
         player_num = message.content.split(' ', 1)[1] # Remove command from input
         
         if self.players_left == None: # Will only ever be None when there's no active player draft
-            embed = discord.Embed(title='Player draft has not started!', color=self.color)
+            embed = discord.Embed(title=self.warning_message('Player draft has not started!'), color=self.color)
         elif message.author not in self.queue: # Don't let people not in queue make draft picks
-            embed = discord.Embed(title='You cannot pick a player unless you are in the queue!', color=self.color)
+            embed = discord.Embed(title=self.warning_message('You cannot pick a player unless you are in the queue!'), color=self.color)
         elif not player_num.isdigit() or not (int(player_num) > 0 and int(player_num) <= len(self.players_left)):
-            embed = discord.Embed(title=f'{player_num} is not a player!', description=self.pdraft_str, color=self.color)
+            embed = discord.Embed(title=self.warning_message(f'{player_num} is not a player!'), description=self.pdraft_str, color=self.color)
         elif message.author in (p for t in self.teams.values() for p in t): # Check if they are in a team
             for team in self.teams.keys(): # Iterate through teams
                 if message.author in self.teams[team]: # If picker in this team
@@ -222,7 +225,7 @@ class QueueGuild:
                     embed = discord.Embed(title=f'**{team}** has picked **{self.teams[team][-1].display_name}**', description=self.pdraft_str, color=self.color)
                     break
         elif len(self.teams) >= 2: # Check if there are already 2 teams
-            embed = discord.Embed(title='There are already two teams!', description=self.pdraft_str, color=self.color)
+            embed = discord.Embed(title=self.warning_message('There are already two teams!'), description=self.pdraft_str, color=self.color)
         else: # Create new team with picker and pickee
             team_name = 'Team ' + str(message.author.display_name)
             self.teams.update({team_name: [message.author, self.players_left.pop(int(player_num) - 1)]})
@@ -242,15 +245,15 @@ class QueueGuild:
     async def about_command(self, message):
         await message.channel.send(embed=self.about_embed)
 
-    async def notFound_command(self, message):
-        embed = discord.Embed(title=f'`{message.content}` isn\'t a recognized command', description='Type `q!help` for a list of commands', color=self.color)
+    async def not_found_command(self, message):
+        embed = discord.Embed(title=self.warning_message(f'`{message.content}` isn\'t a recognized command'), description='Type `q!help` for a list of commands', color=self.color)
         await message.channel.send(embed=embed)
 
     def command_handler(self, message):
         tokens = message.content.split()
         command = tokens[0]
 
-        return self.command_vector.get(command, self.notFound_command)(message)
+        return self.command_vector.get(command, self.not_found_command)(message)
 
 class QueueBot:
     def __init__(self, token):
