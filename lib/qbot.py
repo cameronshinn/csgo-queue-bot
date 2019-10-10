@@ -58,10 +58,10 @@ class QueueGuild:
         embed.add_field(name='**q!view**', value='_Display who is currently in the queue_', inline=False)
         embed.add_field(name='**q!empty**', value='_Empty the queue_', inline=False)
         embed.add_field(name='**q!popflash**', value='_Link this server\'s designated PopFlash lobby_', inline=False)
-        embed.add_field(name='**q!mdraft**', value='_Start (or restart) a map draft_', inline=False)
-        embed.add_field(name='**q!ban <map/number>**', value='_Ban the specified map from the map draft_', inline=False)
         embed.add_field(name='**q!pdraft**', value='_Start (or restart) a player draft_', inline=False)
         embed.add_field(name='**q!pick <number>**', value='_Pick a player for your team_', inline=False)
+        embed.add_field(name='**q!mdraft**', value='_Start (or restart) a map draft_', inline=False)
+        embed.add_field(name='**q!ban <map/number>**', value='_Ban the specified map from the map draft_', inline=False)
         embed.add_field(name='**q!about**', value='_Display information about the 10-ManQ bot_', inline=False)
         return embed
 
@@ -158,47 +158,6 @@ class QueueGuild:
     async def popflash_command(self, message):
         await message.channel.send(embed=self.popflash_embed)
 
-    async def mdraft_command(self, message):
-        self.maps_left = copy.copy(self.map_pool) # Need to copy to preseve the original map pool
-        maps_left_str = ''.join(f'{i}. {m.name}\n' for i, m in enumerate(self.maps_left, 1))
-        embed = discord.Embed(title=f'Map draft has begun!', description=maps_left_str, color=self.color)
-        await message.channel.send(embed=embed)
-
-    async def ban_command(self, message):
-        map_pick = message.content.split(' ', 1)[1] # Remove command from input
-
-        # Check if map number specified and convert to map name if so
-        if map_pick.isdigit() and int(map_pick) > 0 and int(map_pick) <= len(self.map_pool): # Check if digit and in range
-            i = int(map_pick)
-            map_pick = self.map_pool[i - 1] # Convert to map name
-        else: # Look for map string in map names
-            for m in self.map_pool:
-                if m.name.lower() == map_pick.lower():
-                    map_pick = m
-                    break
-
-        if self.maps_left == None: # Will only ever be None when there's no active map draft
-            embed = discord.Embed(title=self.warning_message('Map draft has not started!'), color=self.color)
-        elif map_pick in self.maps_left: # Remove map from remaining
-            self.maps_left.remove(map_pick)
-            maps_left_str = ''.join([f'{i}. {m.name}\n' if m in self.maps_left else f'{i}. ~~{m.name}~~\n' for i, m in enumerate(self.map_pool, 1)])
-            embed = discord.Embed(title=f'**{map_pick.name}** has been banned', description=maps_left_str, color=self.color)
-            embed.set_thumbnail(url=map_pick.image_url)
-        elif map_pick in self.map_pool: # Otherwise map must already be banned
-            maps_left_str = ''.join([f'{i}. {m.name}\n' if m in self.maps_left else f'{i}. ~~{m.name}~~\n' for i, m in enumerate(self.map_pool, 1)])
-            embed = discord.Embed(title=self.warning_message(f'**{map_pick.name}** has already been banned'), description=maps_left_str, color=self.color)
-            embed.set_thumbnail(url=map_pick.image_url)
-        else: # Otherwise input is not map
-            embed = discord.Embed(title=self.warning_message(f'{map_pick} is not a map'), color=self.color)
-
-        if self.maps_left != None and len(self.maps_left) == 1: # End draft when no choices left
-            embed = discord.Embed(title=f'We\'re going to **{self.maps_left[0].name}**!', color=self.color)
-            embed.set_thumbnail(url=self.maps_left[0].image_url)
-            embed.set_footer(text=f'Be sure to select {self.maps_left[0].name} in the PopFlash lobby')
-            self.maps_left = None # Set to None when there is no ongoing map draft
-
-        await message.channel.send(embed=embed)
-
     async def pdraft_command(self, message):
         if not len(self.queue) == self.spaces: # Queue isn't full
             embed = discord.Embed(title=self.warning_message(f'Cannot start player draft until the queue is full! _({len(self.queue)}/{self.spaces})_'), color=self.color)
@@ -239,6 +198,47 @@ class QueueGuild:
                     embed = discord.Embed(title='Teams are set!', description=self.pdraft_str, color=self.color)
                     self.players_left = None # Set to None when there is no ongoing player draft
                     break
+
+        await message.channel.send(embed=embed)
+
+    async def mdraft_command(self, message):
+        self.maps_left = copy.copy(self.map_pool) # Need to copy to preseve the original map pool
+        maps_left_str = ''.join(f'{i}. {m.name}\n' for i, m in enumerate(self.maps_left, 1))
+        embed = discord.Embed(title=f'Map draft has begun!', description=maps_left_str, color=self.color)
+        await message.channel.send(embed=embed)
+
+    async def ban_command(self, message):
+        map_pick = message.content.split(' ', 1)[1] # Remove command from input
+
+        # Check if map number specified and convert to map name if so
+        if map_pick.isdigit() and int(map_pick) > 0 and int(map_pick) <= len(self.map_pool): # Check if digit and in range
+            i = int(map_pick)
+            map_pick = self.map_pool[i - 1] # Convert to map name
+        else: # Look for map string in map names
+            for m in self.map_pool:
+                if m.name.lower() == map_pick.lower():
+                    map_pick = m
+                    break
+
+        if self.maps_left == None: # Will only ever be None when there's no active map draft
+            embed = discord.Embed(title=self.warning_message('Map draft has not started!'), color=self.color)
+        elif map_pick in self.maps_left: # Remove map from remaining
+            self.maps_left.remove(map_pick)
+            maps_left_str = ''.join([f'{i}. {m.name}\n' if m in self.maps_left else f'{i}. ~~{m.name}~~\n' for i, m in enumerate(self.map_pool, 1)])
+            embed = discord.Embed(title=f'**{map_pick.name}** has been banned', description=maps_left_str, color=self.color)
+            embed.set_thumbnail(url=map_pick.image_url)
+        elif map_pick in self.map_pool: # Otherwise map must already be banned
+            maps_left_str = ''.join([f'{i}. {m.name}\n' if m in self.maps_left else f'{i}. ~~{m.name}~~\n' for i, m in enumerate(self.map_pool, 1)])
+            embed = discord.Embed(title=self.warning_message(f'**{map_pick.name}** has already been banned'), description=maps_left_str, color=self.color)
+            embed.set_thumbnail(url=map_pick.image_url)
+        else: # Otherwise input is not map
+            embed = discord.Embed(title=self.warning_message(f'{map_pick} is not a map'), color=self.color)
+
+        if self.maps_left != None and len(self.maps_left) == 1: # End draft when no choices left
+            embed = discord.Embed(title=f'We\'re going to **{self.maps_left[0].name}**!', color=self.color)
+            embed.set_image(url=self.maps_left[0].image_url)
+            embed.set_footer(text=f'Be sure to select {self.maps_left[0].name} in the PopFlash lobby')
+            self.maps_left = None # Set to None when there is no ongoing map draft
 
         await message.channel.send(embed=embed)
 
