@@ -266,9 +266,22 @@ class QueueBot:
             print(self.startupBanner)
 
             # Check and populate connected guilds on startup
+            print('\nBot is online in len(self.client.guilds)')
+            
             for guild in self.client.guilds:
-                self.queue_guild_dict.update({ guild: QueueGuild(guild) }) # NOTE: This could not update new guilds adding the bot if only run on ready
+                print(guild)
+                self.queue_guild_dict.update({ guild: QueueGuild(guild) })
 
+        @self.client.event
+        async def on_guild_join(guild):
+            print(f'Bot has been added to guild: {guild}')
+            self.queue_guild_dict.update({ guild: QueueGuild(guild) })
+            
+        @self.client.event
+        async def on_guild_remove(guild):
+            print(f'Bot has been removed from guild: {guild}')
+            self.queue_guild_dict.pop(guild, None)
+                
         @self.client.event
         async def on_message(message): # NOTE: Not sure if async is necessary here (given that called function is async)
             if message.content.lstrip().startswith('q!'):
