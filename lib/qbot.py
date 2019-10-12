@@ -15,20 +15,16 @@ THUMBNAIL = 'https://i.imgur.com/5v6mLwb.png'
 POPFLASH_URL = 'https://popflash.site/scrim/'
 GITHUB = 'github.com/cameronshinn/csgo-queue-bot'
 
+class MapDraftPanel:
+    def __init__(self):
+        pass
+
 class QueueGuild:
     def __init__(self, guild):
         self.spaces = 10
         self.guild = guild # Guild that class instance belongs to
         self.queue = [] # Where users in queue are held
-        self.map_pool = [
-            maps.de_cache,
-            maps.de_dust2,
-            maps.de_inferno,
-            maps.de_mirage,
-            maps.de_nuke,
-            maps.de_overpass,
-            maps.de_train
-        ]
+        self.map_pool = maps.map_pool
         self.maps_left = None # Set to None when there is no ongoing map draft
         self.teams = {} # Where teams are stored when drafting (team name : list of members)
         self.players_left = None # Set to None when there is no ongoing player draft
@@ -204,9 +200,13 @@ class QueueGuild:
 
     async def mdraft_command(self, message):
         self.maps_left = copy.copy(self.map_pool) # Need to copy to preseve the original map pool
-        maps_left_str = ''.join(f'{i}. {m.name}\n' for i, m in enumerate(self.maps_left, 1))
+        #maps_left_str = ''.join(f'{i}. {m.name}\n' for i, m in enumerate(self.maps_left, 1))
+        maps_left_str = ''.join(f'{m.emoji_icon}  {m.name}\n' for m in self.maps_left)        
         embed = discord.Embed(title=f'Map draft has begun!', description=maps_left_str, color=self.color)
-        await message.channel.send(embed=embed)
+        mdraft_msg = await message.channel.send(embed=embed)
+
+        for m in self.maps_left:
+            await mdraft_msg.add_reaction(m.emoji_icon)
 
     async def ban_command(self, message):
         map_pick = message.content.split(' ', 1)[1] # Remove command from input
