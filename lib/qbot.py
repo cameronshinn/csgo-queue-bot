@@ -2,6 +2,7 @@
 # cameronshinn
 
 import asyncio
+import datetime
 import copy
 import datetime
 import discord
@@ -32,16 +33,16 @@ class QueueGuild:
         self.teams = {} # Where teams are stored when drafting (team name : list of members)
         self.players_left = None # Set to None when there is no ongoing player draft
         self.command_vector = { 'q!help':     self.help_command, # Map command strings to handler functions for easy lookup
-                               'q!join':     self.join_command,
-                               'q!leave':    self.leave_command,
-                               'q!view':     self.view_command,
-                               'q!empty':    self.empty_command,
-                               'q!popflash': self.popflash_command,
-                               'q!mdraft':   self.mdraft_command,
-                               'q!ban':      self.ban_command,
-                               'q!pdraft':   self.pdraft_command,
-                               'q!pick':     self.pick_command,
-                               'q!about':    self.about_command }
+                                'q!join':     self.join_command,
+                                'q!leave':    self.leave_command,
+                                'q!view':     self.view_command,
+                                'q!empty':    self.empty_command,
+                                'q!popflash': self.popflash_command,
+                                'q!mdraft':   self.mdraft_command,
+                                'q!ban':      self.ban_command,
+                                'q!pdraft':   self.pdraft_command,
+                                'q!pick':     self.pick_command,
+                                'q!about':    self.about_command }
         self.thumbnail_url = THUMBNAIL
         self.color = LOGO_COLOR
 
@@ -266,28 +267,35 @@ class QueueBot:
             print(self.startupBanner)
 
             # Check and populate connected guilds on startup
-            print('\nBot is online in len(self.client.guilds)')
+            print(f'\nBot is online in {len(self.client.guilds)} servers:')
             
             for guild in self.client.guilds:
                 print(guild)
                 self.queue_guild_dict.update({ guild: QueueGuild(guild) })
 
+            print('')
+
         @self.client.event
         async def on_guild_join(guild):
-            print(f'Bot has been added to guild: {guild}')
+            print(f'{self.timestamp()}\n    Bot has been added to guild: {guild}\n')
             self.queue_guild_dict.update({ guild: QueueGuild(guild) })
             
         @self.client.event
         async def on_guild_remove(guild):
-            print(f'Bot has been removed from guild: {guild}')
+            print(f'{self.timestamp()}\n    Bot has been removed from guild: {guild}\n')
             self.queue_guild_dict.pop(guild, None)
                 
         @self.client.event
         async def on_message(message): # NOTE: Not sure if async is necessary here (given that called function is async)
             if message.content.lstrip().startswith('q!'):
+                print(f'{self.timestamp()}\n    Command: "{message.content}"\n    Sender:  {message.author}\n    Guild:   {message.guild}\n')
                 await self.queue_guild_dict[message.guild].command_handler(message)
 
         self.client.run(self.token)
+
+    @staticmethod
+    def timestamp():
+        return datetime.datetime.now().strftime("%x - [%X]")
 
     @property
     def startupBanner(self):
