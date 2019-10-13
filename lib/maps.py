@@ -9,7 +9,7 @@ class Map:
         self.emoji_icon = emoji_icon
         self.image_url = image_url
 
-de_cache = Map('Cache', 'de_cache', '<:de_cache:632416021910650919>',
+de_cache = Map('Cache', 'de_cache', '<:de_cache:632416021910650919>', # TODO: Use emoji object?
                'https://liquipedia.net/commons/images/thumb/d/d9/Cache_csgo.jpg/533px-Cache_csgo.jpg')
 de_cbble = Map('Cobblestone', 'de_cbble', '<:de_cbble:632416085899214848>',
                'https://liquipedia.net/commons/images/thumb/2/27/Cbble_csgo.png/533px-Cbble_csgo.png')

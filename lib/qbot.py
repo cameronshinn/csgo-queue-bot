@@ -17,8 +17,56 @@ POPFLASH_URL = 'https://popflash.site/scrim/'
 GITHUB = 'github.com/cameronshinn/csgo-queue-bot'
 
 class MapDraftPanel:
-    def __init__(self):
-        pass
+    def __init__(self, map_pool, color):
+        self.map_pool = map_pool
+        self.maps_left = copy.copy(self.map_pool)
+        self.color = color
+        self.panel = None
+        self.embed_title = f'Map draft has begun!'
+        self.embed = discord.Embed(title=self.embed_title, description=self.maps_left_str, color=self.color)
+        self.embed.set_footer(text='React below to ban a map')
+        
+    @property
+    def maps_left_str(self):
+        return ''.join(f'{m.emoji_icon}  {m.name}\n' if m in self.maps_left else f':x:  ~~{m.name}~~\n' for m in self.map_pool)
+
+    async def send_panel(self, channel):
+        panel = await channel.send(embed=self.embed)
+        await panel.edit(embed=self.embed) # Edit it so the placement doesn't shift when picking first map
+
+        for m in self.maps_left:
+            await panel.add_reaction(m.emoji_icon)
+
+        self.panel = panel
+
+    async def ban_map(self, reaction, user):
+        if self.panel == None or self.panel.id != reaction.message.id:
+            return
+
+        for m in self.maps_left:
+            if str(reaction.emoji) ==  m.emoji_icon: # TODO: Use reaction object in maps.py
+                async for u in reaction.users():
+                    await reaction.remove(u)
+
+                self.maps_left.remove(m)
+
+                if len(self.maps_left) == 1: # TODO: Can't remove last emoji in here until maps.py has emoji objects
+                    map_result = self.maps_left[0]
+                    self.embed_title = f'We\'re going to {map_result.name}! {map_result.emoji_icon}'
+                    self.embed = discord.Embed(title=self.embed_title, color=self.color)
+                    self.embed.set_image(url=map_result.image_url)
+                    self.embed.set_footer(text=f'Be sure to select {map_result.name} in the PopFlash lobby')
+                    self.embed.set_thumbnail(url='')
+                    await self.panel.edit(embed=self.embed)
+                    self.maps_left = copy.copy(self.map_pool)
+                    self.panel = None
+                else:
+                    self.embed_title = f'**{user.name}** has banned **{m.name}**'
+                    self.embed = discord.Embed(title=self.embed_title, description=self.maps_left_str, color=self.color)
+                    self.embed.set_thumbnail(url=m.image_url)
+                    await self.panel.edit(embed=self.embed)
+
+                break
 
 class QueueGuild:
     def __init__(self, guild):
@@ -26,7 +74,7 @@ class QueueGuild:
         self.guild = guild # Guild that class instance belongs to
         self.queue = [] # Where users in queue are held
         self.map_pool = maps.map_pool
-        self.maps_left = None # Set to None when there is no ongoing map draft
+        self.map_draft_panel = None # None when there is no active map draft
         self.teams = {} # Where teams are stored when drafting (team name : list of members)
         self.players_left = None # Set to None when there is no ongoing player draft
         self.command_vector = { 'q!help':     self.help_command, # Map command strings to handler functions for easy lookup
@@ -36,7 +84,6 @@ class QueueGuild:
                                 'q!empty':    self.empty_command,
                                 'q!popflash': self.popflash_command,
                                 'q!mdraft':   self.mdraft_command,
-                                'q!ban':      self.ban_command,
                                 'q!pdraft':   self.pdraft_command,
                                 'q!pick':     self.pick_command,
                                 'q!about':    self.about_command }
@@ -59,7 +106,6 @@ class QueueGuild:
         embed.add_field(name='**q!pdraft**', value='_Start (or restart) a player draft_', inline=False)
         embed.add_field(name='**q!pick <number>**', value='_Pick a player for your team_', inline=False)
         embed.add_field(name='**q!mdraft**', value='_Start (or restart) a map draft_', inline=False)
-        embed.add_field(name='**q!ban <map/number>**', value='_Ban the specified map from the map draft_', inline=False)
         embed.add_field(name='**q!about**', value='_Display information about the 10-ManQ bot_', inline=False)
         return embed
 
@@ -200,49 +246,8 @@ class QueueGuild:
         await message.channel.send(embed=embed)
 
     async def mdraft_command(self, message):
-        self.maps_left = copy.copy(self.map_pool) # Need to copy to preseve the original map pool
-        #maps_left_str = ''.join(f'{i}. {m.name}\n' for i, m in enumerate(self.maps_left, 1))
-        maps_left_str = ''.join(f'{m.emoji_icon}  {m.name}\n' for m in self.maps_left)        
-        embed = discord.Embed(title=f'Map draft has begun!', description=maps_left_str, color=self.color)
-        mdraft_msg = await message.channel.send(embed=embed)
-
-        for m in self.maps_left:
-            await mdraft_msg.add_reaction(m.emoji_icon)
-
-    async def ban_command(self, message):
-        map_pick = message.content.split(' ', 1)[1] # Remove command from input
-
-        # Check if map number specified and convert to map name if so
-        if map_pick.isdigit() and int(map_pick) > 0 and int(map_pick) <= len(self.map_pool): # Check if digit and in range
-            i = int(map_pick)
-            map_pick = self.map_pool[i - 1] # Convert to map name
-        else: # Look for map string in map names
-            for m in self.map_pool:
-                if m.name.lower() == map_pick.lower():
-                    map_pick = m
-                    break
-
-        if self.maps_left == None: # Will only ever be None when there's no active map draft
-            embed = discord.Embed(title=self.warning_message('Map draft has not started!'), color=self.color)
-        elif map_pick in self.maps_left: # Remove map from remaining
-            self.maps_left.remove(map_pick)
-            maps_left_str = ''.join([f'{i}. {m.name}\n' if m in self.maps_left else f'{i}. ~~{m.name}~~\n' for i, m in enumerate(self.map_pool, 1)])
-            embed = discord.Embed(title=f'**{map_pick.name}** has been banned', description=maps_left_str, color=self.color)
-            embed.set_thumbnail(url=map_pick.image_url)
-        elif map_pick in self.map_pool: # Otherwise map must already be banned
-            maps_left_str = ''.join([f'{i}. {m.name}\n' if m in self.maps_left else f'{i}. ~~{m.name}~~\n' for i, m in enumerate(self.map_pool, 1)])
-            embed = discord.Embed(title=self.warning_message(f'**{map_pick.name}** has already been banned'), description=maps_left_str, color=self.color)
-            embed.set_thumbnail(url=map_pick.image_url)
-        else: # Otherwise input is not map
-            embed = discord.Embed(title=self.warning_message(f'{map_pick} is not a map'), color=self.color)
-
-        if self.maps_left != None and len(self.maps_left) == 1: # End draft when no choices left
-            embed = discord.Embed(title=f'We\'re going to **{self.maps_left[0].name}**!', color=self.color)
-            embed.set_image(url=self.maps_left[0].image_url)
-            embed.set_footer(text=f'Be sure to select {self.maps_left[0].name} in the PopFlash lobby')
-            self.maps_left = None # Set to None when there is no ongoing map draft
-
-        await message.channel.send(embed=embed)
+        self.map_draft_panel = MapDraftPanel(self.map_pool, self.color)
+        await self.map_draft_panel.send_panel(message.channel)
 
     async def about_command(self, message):
         await message.channel.send(embed=self.about_embed)
@@ -256,6 +261,12 @@ class QueueGuild:
         command = tokens[0]
 
         return self.command_vector.get(command, self.not_found_command)(message)
+
+    def react_handler(self, reaction, user):
+        if self.map_draft_panel != None:
+            return self.map_draft_panel.ban_map(reaction, user)
+        else:
+            return 1 # TODO: Fix ret val
 
 class QueueBot:
     def __init__(self, token):
@@ -288,9 +299,19 @@ class QueueBot:
                 
         @self.client.event
         async def on_message(message): # NOTE: Not sure if async is necessary here (given that called function is async)
+            if message.author == self.client.user:
+                return
+
             if message.content.lstrip().startswith('q!'):
                 print(f'{self.timestamp()}\n    Command: "{message.content}"\n    Sender:  {message.author}\n    Guild:   {message.guild}\n')
                 await self.queue_guild_dict[message.guild].command_handler(message)
+
+        @self.client.event
+        async def on_reaction_add(reaction, user):
+            if user == self.client.user:
+                return
+
+            await self.queue_guild_dict[reaction.message.guild].react_handler(reaction, user)
 
         self.client.run(self.token)
 
