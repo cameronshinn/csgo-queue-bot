@@ -28,7 +28,7 @@ class MapDraftPanel:
         
     @property
     def maps_left_str(self):
-        return ''.join(f'{m.emoji_icon}  {m.name}\n' if m in self.maps_left else f':x:  ~~{m.name}~~\n' for m in self.map_pool)
+        return ''.join(f'{m.emoji_icon}  {m.name}\n' if m in self.maps_left else f':heavy_multiplication_x:  ~~{m.name}~~\n' for m in self.map_pool)
 
     async def send_panel(self, channel):
         panel = await channel.send(embed=self.embed)
