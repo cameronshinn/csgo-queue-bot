@@ -24,7 +24,7 @@ class MapDraftPanel:
         self.panel = None
         self.embed_title = f'Map draft has begun!'
         self.embed = discord.Embed(title=self.embed_title, description=self.maps_left_str, color=self.color)
-        self.embed.set_footer(text='React below to ban a map')
+        self.embed.set_footer(text='React to a map icon below to ban the corresponding map')
         
     @property
     def maps_left_str(self):
@@ -64,6 +64,7 @@ class MapDraftPanel:
                     self.embed_title = f'**{user.name}** has banned **{m.name}**'
                     self.embed = discord.Embed(title=self.embed_title, description=self.maps_left_str, color=self.color)
                     self.embed.set_thumbnail(url=m.image_url)
+                    self.embed.set_footer(text='React to a map icon below to ban the corresponding map')
                     await self.panel.edit(embed=self.embed)
 
                 break
