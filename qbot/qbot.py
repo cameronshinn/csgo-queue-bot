@@ -44,14 +44,15 @@ class MapDraftPanel:
             return
 
         for m in self.maps_left:
-            if str(reaction.emoji) ==  m.emoji_icon: # TODO: Use reaction object in maps.py
+            if str(reaction.emoji) ==  m.emoji_icon:
                 async for u in reaction.users():
                     await reaction.remove(u)
 
                 self.maps_left.remove(m)
 
-                if len(self.maps_left) == 1: # TODO: Can't remove last emoji in here until maps.py has emoji objects
+                if len(self.maps_left) == 1:
                     map_result = self.maps_left[0]
+                    await self.panel.clear_reactions()
                     self.embed_title = f'We\'re going to {map_result.name}! {map_result.emoji_icon}'
                     self.embed = discord.Embed(title=self.embed_title, color=self.color)
                     self.embed.set_image(url=map_result.image_url)
