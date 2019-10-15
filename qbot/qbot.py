@@ -124,7 +124,7 @@ class QueueGuild:
 
     @property
     def popflash_embed(self): # Set with property decorator since the server name can change over time
-        guild_url = POPFLASH_URL + ''.join(char.lower() for char in str(self.guild) if char.isalpha() or char.isdigit())
+        guild_url = POPFLASH_URL + ''.join(char for char in str(self.guild) if char.isalpha() or char.isdigit())
         return discord.Embed(title="PopFlash lobby is up!", description=guild_url, color=self.color)
 
     @property
