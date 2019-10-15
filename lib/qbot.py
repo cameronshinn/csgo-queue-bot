@@ -56,7 +56,6 @@ class MapDraftPanel:
                     self.embed = discord.Embed(title=self.embed_title, color=self.color)
                     self.embed.set_image(url=map_result.image_url)
                     self.embed.set_footer(text=f'Be sure to select {map_result.name} in the PopFlash lobby')
-                    self.embed.set_thumbnail(url='')
                     await self.panel.edit(embed=self.embed)
                     self.maps_left = copy.copy(self.map_pool)
                     self.panel = None
