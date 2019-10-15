@@ -1,4 +1,4 @@
-![10-Man Queues][logo]
+![alt text][logo]
 
 # csgo-queue-bot
 *A Discord bot to manage and setup CS:GO games*
