@@ -1,4 +1,4 @@
-![alt text][logo]
+<img src="https://i.imgur.com/5v6mLwb.png" alt="Logo" align="middle" width="50" height="50"/>
 
 # csgo-queue-bot
 *A Discord bot to manage and setup CS:GO games*
@@ -17,6 +17,3 @@ This program uses the Discord Python API to manage a bot that manages queues of 
 8.  `q!pick <number>`:    Pick a player for your team
 9.  `q!mdraft`:           Start (or restart) a map draft
 10. `q!about`:            Display information about the 10-Man Queue bot
-
-[Icon saved here](https://i.imgur.com/5v6mLwb.png)
-[logo]: https://i.imgur.com/5v6mLwb.png "10-Man Queues"
