@@ -19,4 +19,4 @@ This program uses the Discord Python API to manage a bot that manages queues of 
 10. `q!about`:            Display information about the 10-Man Queue bot
 
 [Icon saved here][logo]
-[logo]: https://i.imgur.com/5v6mLwb.png
+[logo]: https://i.imgur.com/5v6mLwb.png "10-Man Queues"
