@@ -1,6 +1,6 @@
-<img src="https://i.imgur.com/5v6mLwb.png" alt="Logo" align="middle" width="50" height="50"/>
+<img src="https://i.imgur.com/5v6mLwb.png" alt="10-Man Queues" align="right" width="75" height="75"/>
 
-# csgo-queue-bot
+# CS:GO Queue Bot &ensp; [![Discord Bots](https://top.gg/api/widget/status/539669626863353868.svg)](https://top.gg/bot/539669626863353868)
 *A Discord bot to manage and setup CS:GO games*
 
 This program uses the Discord Python API to manage a bot that manages queues of CS:GO players who want to play against other Discord guild members.
