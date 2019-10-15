@@ -13,7 +13,7 @@ import maps
 
 LOGO_COLOR = 0xF4B903
 THUMBNAIL = 'https://i.imgur.com/5v6mLwb.png'
-POPFLASH_URL = 'https://popflash.site/scrim/'
+POPFLASH_URL = 'popflash.site/scrim/'
 GITHUB = 'github.com/cameronshinn/csgo-queue-bot'
 
 class MapDraftPanel:
