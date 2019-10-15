@@ -18,5 +18,5 @@ This program uses the Discord Python API to manage a bot that manages queues of 
 9.  `q!mdraft`:           Start (or restart) a map draft
 10. `q!about`:            Display information about the 10-Man Queue bot
 
-[Icon saved here][https://i.imgur.com/5v6mLwb.png]
+[Icon saved here](https://i.imgur.com/5v6mLwb.png)
 [logo]: https://i.imgur.com/5v6mLwb.png "10-Man Queues"
