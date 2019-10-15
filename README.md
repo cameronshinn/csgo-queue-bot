@@ -1,5 +1,7 @@
+![10-Man Queues][logo]
+
 # csgo-queue-bot
-*A Discord bot to manage and setup CS:GO games*   [![Discord Bots](https://top.gg/api/widget/status/539669626863353868.svg)](https://top.gg/bot/539669626863353868)
+*A Discord bot to manage and setup CS:GO games*
 
 This program uses the Discord Python API to manage a bot that manages queues of CS:GO players who want to play against other Discord guild members.
 
@@ -16,4 +18,5 @@ This program uses the Discord Python API to manage a bot that manages queues of 
 9.  `q!mdraft`:           Start (or restart) a map draft
 10. `q!about`:            Display information about the 10-Man Queue bot
 
-[Icon saved here](https://i.imgur.com/5v6mLwb.png)
+[Icon saved here][logo]
+[logo]: https://i.imgur.com/5v6mLwb.png
