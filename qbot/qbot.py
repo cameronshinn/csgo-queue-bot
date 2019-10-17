@@ -21,7 +21,7 @@ class MapDraftPanel:
         self.map_pool = map_pool
         self.maps_left = copy.copy(self.map_pool)
         self.color = color
-        self.panel = None
+        self.msg = None
         self.embed_title = f'Map draft has begun!'
         self.embed = discord.Embed(title=self.embed_title, description=self.maps_left_str, color=self.color)
         self.embed.set_footer(text='React to a map icon below to ban the corresponding map')
@@ -37,11 +37,11 @@ class MapDraftPanel:
         for m in self.maps_left:
             await panel.add_reaction(m.emoji_icon)
 
-        self.panel = panel
+        self.msg = panel
 
     async def ban_map(self, reaction, user):
-        if self.panel == None or self.panel.id != reaction.message.id:
-            return
+        if self.msg == None or self.msg.id != reaction.message.id:
+            return self.msg
 
         for m in self.maps_left:
             if str(reaction.emoji) ==  m.emoji_icon:
@@ -52,22 +52,22 @@ class MapDraftPanel:
 
                 if len(self.maps_left) == 1:
                     map_result = self.maps_left[0]
-                    await self.panel.clear_reactions()
+                    await self.msg.clear_reactions()
                     self.embed_title = f'We\'re going to {map_result.name}! {map_result.emoji_icon}'
                     self.embed = discord.Embed(title=self.embed_title, color=self.color)
                     self.embed.set_image(url=map_result.image_url)
                     self.embed.set_footer(text=f'Be sure to select {map_result.name} in the PopFlash lobby')
-                    await self.panel.edit(embed=self.embed)
+                    await self.msg.edit(embed=self.embed)
                     self.maps_left = copy.copy(self.map_pool)
-                    self.panel = None
+                    self.msg = None
+                    return self.msg
                 else:
                     self.embed_title = f'**{user.name}** has banned **{m.name}**'
                     self.embed = discord.Embed(title=self.embed_title, description=self.maps_left_str, color=self.color)
                     self.embed.set_thumbnail(url=m.image_url)
                     self.embed.set_footer(text='React to a map icon below to ban the corresponding map')
-                    await self.panel.edit(embed=self.embed)
-
-                break
+                    await self.msg.edit(embed=self.embed)
+                    return self.msg
 
 class QueueGuild:
     def __init__(self, guild):
@@ -75,7 +75,7 @@ class QueueGuild:
         self.guild = guild # Guild that class instance belongs to
         self.queue = [] # Where users in queue are held
         self.map_pool = maps.map_pool
-        self.map_draft_panel = None # None when there is no active map draft
+        self.draft_panels = {'mdraft': None}
         self.teams = {} # Where teams are stored when drafting (team name : list of members)
         self.players_left = None # Set to None when there is no ongoing player draft
         self.command_vector = { 'q!help':     self.help_command, # Map command strings to handler functions for easy lookup
@@ -88,6 +88,7 @@ class QueueGuild:
                                 'q!pdraft':   self.pdraft_command,
                                 'q!pick':     self.pick_command,
                                 'q!about':    self.about_command }
+        self.react_vector = {}
         self.thumbnail_url = THUMBNAIL
         self.color = LOGO_COLOR
 
@@ -247,8 +248,8 @@ class QueueGuild:
         await message.channel.send(embed=embed)
 
     async def mdraft_command(self, message):
-        self.map_draft_panel = MapDraftPanel(self.map_pool, self.color)
-        await self.map_draft_panel.send_panel(message.channel)
+        self.draft_panels['mdraft'] = MapDraftPanel(self.map_pool, self.color)
+        await self.draft_panels['mdraft'].send_panel(message.channel)
 
     async def about_command(self, message):
         await message.channel.send(embed=self.about_embed)
@@ -264,10 +265,13 @@ class QueueGuild:
         return self.command_vector.get(command, self.not_found_command)(message)
 
     def react_handler(self, reaction, user):
-        if self.map_draft_panel != None:
-            return self.map_draft_panel.ban_map(reaction, user)
-        else:
-            return 1 # TODO: Fix ret val
+        if self.draft_panels['mdraft'] != None:
+            retval = self.draft_panels['mdraft'].ban_map(reaction, user)
+            
+            if retval is None:
+                self.draft_panels['mdraft'] = None
+
+            return retval
 
 class QueueBot:
     def __init__(self, token):
