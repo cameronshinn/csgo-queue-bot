@@ -296,7 +296,7 @@ class QueueBot(commands.Cog):
             print(f'\nBot is online in {len(self.client.guilds)} servers:')
             
             for guild in self.client.guilds:
-                print(guild)
+                print(f'    {guild}')
                 self.queue_guild_dict.update({ guild: QueueGuild(guild) })
 
             print('')
@@ -325,7 +325,10 @@ class QueueBot(commands.Cog):
             if user == self.client.user:
                 return
 
-            await self.queue_guild_dict[reaction.message.guild].react_handler(reaction, user)
+            try:
+                await self.queue_guild_dict[reaction.message.guild].react_handler(reaction, user)
+            except TypeError: # Temp solution to stop flooding the command prompt with exceptions
+                pass
 
         # Start bot
         if dbl_token:
@@ -340,9 +343,9 @@ class QueueBot(commands.Cog):
         
         try:
             await self.dblpy.post_guild_count()
-            print(f'Posted server count ({self.dblpy.guild_count()})')
+            print(f'Posted server count ({self.dblpy.guild_count()})\n')
         except Exception as e:
-            raise Exception(f'Failed to post server count {type(e).__name__}\n')
+            raise Exception(f'Failed to post server count {type(e).__name__}\n\n')
 
     @update_stats.before_loop
     async def wait_for_bot(self):
