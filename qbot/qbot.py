@@ -2,13 +2,17 @@
 # qbot.py
 # cameronshinn
 
+# Import libraries
 import asyncio
 import datetime
+import dbl
 import copy
 import datetime
 import discord
 import time
+from discord.ext import commands, tasks
 
+# Import other files
 import maps
 
 LOGO_COLOR = 0xF4B903
@@ -273,14 +277,19 @@ class QueueGuild:
 
             return retval
 
-class QueueBot:
-    def __init__(self, token):
-        self.client = discord.Client()
-        self.token = token # Discord API bot token
+class QueueBot(commands.Cog):
+    def __init__(self, client, discord_token, dbl_token=None):
+        self.client = client
+        self.discord_token = discord_token # Discord API bot token
+        
+        if dbl_token:
+            self.dbl_token = dbl_token # top.gg DBL token
+            self.dblpy = dbl.DBLClient(self.client, self.dbl_token)
+
         self.queue_guild_dict = {} # Map guild name string to corresponding QueueGuild object
 
         @self.client.event
-        async def on_ready(): # NOTE: Not sure if async is necessary here
+        async def on_ready():
             print(self.startupBanner)
 
             # Check and populate connected guilds on startup
@@ -318,7 +327,28 @@ class QueueBot:
 
             await self.queue_guild_dict[reaction.message.guild].react_handler(reaction, user)
 
-        self.client.run(self.token)
+        # Start bot
+        if dbl_token:
+            self.update_stats.start()
+        
+        self.client.run(self.discord_token)
+
+    @tasks.loop(minutes=60)
+    async def update_stats(self):
+        """Post server count to top.gg"""
+        print('Attempting to post server count to top.gg...')
+        
+        try:
+            await self.dblpy.post_guild_count()
+            print(f'Posted server count ({self.dblpy.guild_count()})')
+        except Exception as e:
+            raise Exception(f'Failed to post server count {type(e).__name__}\n')
+
+    @update_stats.before_loop
+    async def wait_for_bot(self):
+        """Wait until the bot is ready before starting the update stats loop"""
+        await self.client.wait_until_ready()
+        await asyncio.sleep(5) # Give the bot time to run on_ready()
 
     @staticmethod
     def timestamp():
