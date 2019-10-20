@@ -153,6 +153,8 @@ class QueueGuild:
         embed = discord.Embed(title='__10-ManQ Queue Bot__', description='The definitive bot for setting up 10-man lobbies', color=self.color)
         embed.set_thumbnail(url=self.thumbnail_url)
         embed.add_field(name='This bot gives players a convenient way to find Discord server members who want to play in-house pickup games of CS:GO', value=GITHUB, inline=False)
+        embed.add_field(name='[Join our support server here](https://discordapp.com/invite/tskeyDA)')
+        embed.add_field(name='[Source code can be found here on GitHub](https://github.com/cameronshinn/csgo-queue-bot)')
         return embed
 
     async def join_command(self, message):
