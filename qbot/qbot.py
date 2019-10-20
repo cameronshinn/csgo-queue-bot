@@ -150,7 +150,7 @@ class QueueGuild:
     
     @property
     def about_embed(self):
-        embed = discord.Embed(title='__10-ManQ Queue Bot__', description='The definitive bot for setting up 10-man lobbies\nThis bot gives players a convenient way to find Discord server members who want to play in-house pickup games of CS:GO\n[Join our support server here](https://discordapp.com/invite/tskeyDA)\n[Source code can be found here on GitHub](https://github.com/cameronshinn/csgo-queue-bot)', color=self.color)
+        embed = discord.Embed(title='__10-ManQ Queue Bot__', description='_The definitive bot for setting up 10-man lobbies_\n\nThis bot gives players a convenient way to find Discord server members who want to play in-house pickup games of CS:GO\n\n[Join our support server here](https://discordapp.com/invite/tskeyDA)\n\n[Source code can be found here on GitHub](https://github.com/cameronshinn/csgo-queue-bot)', color=self.color)
         embed.set_thumbnail(url=self.thumbnail_url)
         return embed
 
