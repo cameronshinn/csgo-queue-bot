@@ -25,6 +25,6 @@ def run(discord_token, dbl_token=None):
     bot.add_cog(PopflashCog(bot, BOT_COLOR))
 
     if dbl_token:
-        bot.add_cog(DblCog(bot, DBL_TOKEN))
+        bot.add_cog(DblCog(bot, dbl_token))
 
     bot.run(discord_token)
