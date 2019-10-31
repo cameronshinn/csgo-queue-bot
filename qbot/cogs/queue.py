@@ -45,9 +45,9 @@ class QueueCog(commands.Cog):
         """ Check if the member can be added to the guild queue and add them if so """
         queue = self.guild_queues[ctx.guild]
 
-        # if ctx.author in queue: # Author already in queue
-        #     join_embed = discord.Embed(title=f'**{ctx.author.display_name}** is already in the queue', color=self.color)
-        if len(queue) >= self.spots: # Queue full TODO: make elif
+        if ctx.author in queue: # Author already in queue
+            join_embed = discord.Embed(title=f'**{ctx.author.display_name}** is already in the queue', color=self.color)
+        elif len(queue) >= self.spots: # Queue full
             join_embed = discord.Embed(title=f'Unable to add **{ctx.author.display_name}**\nQueue is full _({len(queue)}/{self.spots})_', color=self.color)
         else: # Open spot in queue
             queue.append(ctx.author)

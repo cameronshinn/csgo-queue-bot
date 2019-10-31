@@ -113,7 +113,7 @@ class TeamDraftCog(commands.Cog):
             return
 
         players = self.guild_player_pool[guild] # Get player dictionary for corresponding guild
-        player_pick = players.get(str(reaction.emoji)) # TODO: Make sure the str() works here
+        player_pick = players.get(str(reaction.emoji))
         team_1 = self.guild_teams[guild][0]
         team_2 = self.guild_teams[guild][1]
 
