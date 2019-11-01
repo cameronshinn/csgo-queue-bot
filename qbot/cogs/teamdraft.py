@@ -43,9 +43,9 @@ class TeamDraftCog(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
         """ Remove queue list when a guild is removed """
-        self.guild_player_pool.pop(guild)
-        self.guild_teams.pop(guild)
-        self.guild_msgs.pop(guild)
+        self.guild_player_pool.pop(guild, None)
+        self.guild_teams.pop(guild, None)
+        self.guild_msgs.pop(guild, None)
 
     def player_draft_embed(self, title, guild):
         """ Return the player draft embed based on the guild attributes """
