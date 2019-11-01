@@ -45,10 +45,8 @@ class ConsoleCog(commands.Cog):
     async def on_guild_join(self, guild):
         """ Print guild adds to the console """
         print(f'{self.timestamp()}\n    Bot has been added to guild: {guild}\n')
-        self.queue_guild_dict.update({guild: QueueGuild(guild)})
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
         """ Print guild removes to the console """
         print(f'{self.timestamp()}\n    Bot has been removed from guild: {guild}\n')
-        self.queue_guild_dict.pop(guild, None)
