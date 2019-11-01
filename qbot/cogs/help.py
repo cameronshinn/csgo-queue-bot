@@ -54,7 +54,6 @@ class HelpCog(commands.Cog):
     async def on_message(self, message):
         """ Send the help embed if the bot is mentioned """
         if self.bot.user in message.mentions:
-            await ctx.trigger_typing()
             await message.channel.send(embed=self.help_embed('__Queue Bot Commands__'))
 
     @commands.command(brief='Display basic info about this bot')
