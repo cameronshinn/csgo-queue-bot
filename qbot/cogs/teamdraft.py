@@ -97,8 +97,9 @@ class TeamDraftCog(commands.Cog):
 
         msg = await ctx.send(embed=embed)
 
-        for emoji in EMOJI_LIST:
-            await msg.add_reaction(emoji)
+        if players is not None:
+            for emoji in EMOJI_LIST:
+                await msg.add_reaction(emoji)
 
         self.guild_msgs[ctx.guild] = msg
 
