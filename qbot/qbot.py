@@ -12,7 +12,7 @@ from cogs.teamdraft import TeamDraftCog
 import discord
 from discord.ext import commands
 
-BOT_COLOR = 0xFD881E
+BOT_COLOR = 0x0D61B7
 
 def run(discord_token, dbl_token=None):
     """ Create the bot, add the cogs and run it """
