@@ -16,7 +16,7 @@ BOT_COLOR = 0x0D61B7
 
 def run(discord_token, dbl_token=None):
     """ Create the bot, add the cogs and run it """
-    bot = commands.Bot(command_prefix='q!', case_insensitive=True)
+    bot = commands.Bot(command_prefix=('q!', 'Q!'), case_insensitive=True)
     bot.add_cog(ConsoleCog(bot))
     bot.add_cog(HelpCog(bot, BOT_COLOR))
     bot.add_cog(QueueCog(bot, BOT_COLOR))
