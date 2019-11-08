@@ -93,6 +93,7 @@ class TeamDraftCog(commands.Cog):
             embed = discord.Embed(title=f'Cannot start player draft until the queue is full! _({in_queue}/{spots})_', color=self.color)
         else:
             self.guild_player_pool[ctx.guild] = dict(zip(EMOJI_LIST, players))
+            self.guild_teams[ctx.guild] = [[], []]
             embed = self.player_draft_embed('Team draft has begun!', ctx.guild)
 
         msg = await ctx.send(embed=embed)
