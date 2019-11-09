@@ -106,7 +106,7 @@ class TeamDraftCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
-        if user == self.bot.user:
+        if user == self.bot.user or user not in [p for e, p in self.]: # TODO: Change emote -> player dict to list?
             return
 
         guild = user.guild
