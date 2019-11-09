@@ -20,6 +20,7 @@ class HelpCog(commands.Cog):
     def help_embed(self, title):
         embed = discord.Embed(title=title, color=self.color)
         prefix = self.bot.command_prefix
+        prefix = prefix[0] if not prefix is str else prefix
 
         for cog in self.bot.cogs: # Uset bot.cogs instead of bot.commands to control ordering in the help embed
             for cmd in self.bot.get_cog(cog).get_commands():
