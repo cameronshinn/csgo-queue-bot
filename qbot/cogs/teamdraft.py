@@ -106,7 +106,7 @@ class TeamDraftCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
-        if user == self.bot.user or user not in [p for e, p in self.]: # TODO: Change emote -> player dict to list?
+        if user == self.bot.user:
             return
 
         guild = user.guild
@@ -118,6 +118,9 @@ class TeamDraftCog(commands.Cog):
         player_pick = players.get(str(reaction.emoji))
         team_1 = self.guild_teams[guild][0]
         team_2 = self.guild_teams[guild][1]
+
+        if user not in [p for e, p in players.items()]: # TODO: Change player dict to list
+            return
 
         # Ignore if emoji doesn't correspond to player or they're already on a team
         if player_pick is None or player_pick in team_1 or player_pick in team_2:
