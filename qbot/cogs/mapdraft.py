@@ -13,23 +13,23 @@ class Map:
         self.image_url = image_url
 
 de_cache = Map('Cache', 'de_cache', '<:de_cache:632416021910650919>',
-               'https://liquipedia.net/commons/images/9/9e/Csgo_cache.png')
+               'https://github.com/cameronshinn/csgo-queue-bot/blob/master/assets/map_icons/cache.png')
 de_cbble = Map('Cobblestone', 'de_cbble', '<:de_cbble:632416085899214848>',
-               'https://liquipedia.net/commons/images/thumb/2/27/Cbble_csgo.png/533px-Cbble_csgo.png')
+               'https://github.com/cameronshinn/csgo-queue-bot/blob/master/assets/map_icons/cobblestone.png')
 de_dust2 = Map('Dust II', 'de_dust2', '<:de_dust2:632416148658323476>',
-               'https://liquipedia.net/commons/images/1/12/Csgo_dust2.0.jpg')
+               'https://github.com/cameronshinn/csgo-queue-bot/blob/master/assets/map_icons/dust_ii.png')
 de_inferno = Map('Inferno', 'de_inferno', '<:de_inferno:632416390112084008>',
-                 'https://liquipedia.net/commons/images/2/2b/De_new_inferno.jpg')
+                 'https://github.com/cameronshinn/csgo-queue-bot/blob/master/assets/map_icons/inferno.png')
 de_mirage = Map('Mirage', 'de_mirage', '<:de_mirage:632416441551028225>',
-                'https://liquipedia.net/commons/images/f/f3/Csgo_mirage.jpg')
+                'https://github.com/cameronshinn/csgo-queue-bot/blob/master/assets/map_icons/mirage.png')
 de_nuke = Map('Nuke', 'de_nuke', '<:de_nuke:632416475029962763>',
-              'https://liquipedia.net/commons/images/5/5e/Nuke_csgo.jpg')
+              'https://github.com/cameronshinn/csgo-queue-bot/blob/master/assets/map_icons/nuke.png')
 de_overpass = Map('Overpass', 'de_overpass', '<:de_overpass:632416513562902529>',
-                  'https://liquipedia.net/commons/images/0/0f/Csgo_overpass.jpg')
+                  'https://github.com/cameronshinn/csgo-queue-bot/blob/master/assets/map_icons/overpass.png')
 de_train = Map('Train', 'de_train', '<:de_train:632416540687335444>',
-               'https://liquipedia.net/commons/images/5/56/Train_csgo.jpg')
+               'https://github.com/cameronshinn/csgo-queue-bot/blob/master/assets/map_icons/train.png')
 de_vertigo = Map('Vertigo', 'de_vertigo', '<:de_vertigo:632416584870395904>',
-                 'https://liquipedia.net/commons/images/5/59/Csgo_de_vertigo_new.jpg')
+                 'https://github.com/cameronshinn/csgo-queue-bot/blob/master/assets/map_icons/vertigo.png')
 
 map_pool = [
     de_cache,
