@@ -13,23 +13,23 @@ class Map:
         self.image_url = image_url
 
 de_cache = Map('Cache', 'de_cache', '<:de_cache:632416021910650919>',
-               'https://github.com/cameronshinn/csgo-queue-bot/blob/master/assets/map_icons/cache.png')
+               'https://raw.githubusercontent.com/cameronshinn/csgo-queue-bot/master/assets/map_icons/cache.png')
 de_cbble = Map('Cobblestone', 'de_cbble', '<:de_cbble:632416085899214848>',
-               'https://github.com/cameronshinn/csgo-queue-bot/blob/master/assets/map_icons/cobblestone.png')
+               'https://raw.githubusercontent.com/cameronshinn/csgo-queue-bot/master/assets/map_icons/cobblestone.png')
 de_dust2 = Map('Dust II', 'de_dust2', '<:de_dust2:632416148658323476>',
-               'https://github.com/cameronshinn/csgo-queue-bot/blob/master/assets/map_icons/dust_ii.png')
+               'https://raw.githubusercontent.com/cameronshinn/csgo-queue-bot/master/assets/map_icons/dust_ii.png')
 de_inferno = Map('Inferno', 'de_inferno', '<:de_inferno:632416390112084008>',
-                 'https://github.com/cameronshinn/csgo-queue-bot/blob/master/assets/map_icons/inferno.png')
+                 'https://raw.githubusercontent.com/cameronshinn/csgo-queue-bot/master/assets/map_icons/inferno.png')
 de_mirage = Map('Mirage', 'de_mirage', '<:de_mirage:632416441551028225>',
-                'https://github.com/cameronshinn/csgo-queue-bot/blob/master/assets/map_icons/mirage.png')
+                'https://raw.githubusercontent.com/cameronshinn/csgo-queue-bot/master/assets/map_icons/mirage.png')
 de_nuke = Map('Nuke', 'de_nuke', '<:de_nuke:632416475029962763>',
-              'https://github.com/cameronshinn/csgo-queue-bot/blob/master/assets/map_icons/nuke.png')
+              'https://raw.githubusercontent.com/cameronshinn/csgo-queue-bot/master/assets/map_icons/nuke.png')
 de_overpass = Map('Overpass', 'de_overpass', '<:de_overpass:632416513562902529>',
-                  'https://github.com/cameronshinn/csgo-queue-bot/blob/master/assets/map_icons/overpass.png')
+                  'https://raw.githubusercontent.com/cameronshinn/csgo-queue-bot/master/assets/map_icons/overpass.png')
 de_train = Map('Train', 'de_train', '<:de_train:632416540687335444>',
-               'https://github.com/cameronshinn/csgo-queue-bot/blob/master/assets/map_icons/train.png')
+               'https://raw.githubusercontent.com/cameronshinn/csgo-queue-bot/master/assets/map_icons/train.png')
 de_vertigo = Map('Vertigo', 'de_vertigo', '<:de_vertigo:632416584870395904>',
-                 'https://github.com/cameronshinn/csgo-queue-bot/blob/master/assets/map_icons/vertigo.png')
+                 'https://raw.githubusercontent.com/cameronshinn/csgo-queue-bot/master/assets/map_icons/vertigo.png')
 
 map_pool = [
     de_cache,
