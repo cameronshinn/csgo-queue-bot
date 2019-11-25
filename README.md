@@ -1,4 +1,4 @@
-<img src="https://i.imgur.com/5v6mLwb.png" alt="10-Man Queues" align="right" width="75" height="75"/>
+<img src="icon.png" alt="10-Man Queues" align="right" width="75" height="75"/>
 
 # CS:GO Queue Bot &ensp; [![Discord Bots](https://top.gg/api/widget/status/539669626863353868.svg)](https://top.gg/bot/539669626863353868)
 *A Discord bot to manage and setup CS:GO games*
