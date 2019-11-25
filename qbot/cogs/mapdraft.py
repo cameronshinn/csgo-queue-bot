@@ -54,6 +54,7 @@ class MapDraftCog(commands.Cog):
         self.color = color
         self.guild_msgs = {} # Map guild -> last send map draft message
         self.guild_maps_left = {} # Map guild -> list of maps left in draft
+        self.footer = 'React to any of the map icons below to ban the corresponding map'
 
     async def cog_before_invoke(self, ctx):
         """ Trigger typing at the start of every command """
@@ -69,7 +70,7 @@ class MapDraftCog(commands.Cog):
     async def mdraft(self, ctx):
         """ Start a map draft by sending a map draft embed panel """
         embed = discord.Embed(title='Map draft has begun!', description=self.maps_left_str(ctx.guild), color=self.color)
-        embed.set_footer(text='React to a map icon below to ban the corresponding map')
+        embed.set_footer(text=self.footer)
         msg = await ctx.send(embed=embed)
         await msg.edit(embed=embed)
 
@@ -113,5 +114,5 @@ class MapDraftCog(commands.Cog):
                     embed_title = f'**{user.name}** has banned **{m.name}**'
                     embed = discord.Embed(title=embed_title, description=self.maps_left_str(guild), color=self.color)
                     embed.set_thumbnail(url=m.image_url)
-                    embed.set_footer(text='React to a map icon below to ban the corresponding map')
+                    embed.set_footer(text=self.footer)
                     await msg.edit(embed=embed)
