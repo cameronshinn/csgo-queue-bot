@@ -40,6 +40,25 @@ class QueueCog(commands.Cog):
         """ Trigger typing at the start of every command """
         await ctx.trigger_typing()
 
+    def pop_queue(self, ctx):
+        self.popped_guild_queues[ctx.guild] = self.guild_queues.pop(ctx.guild, None) # Save who was in the queue for player draft
+        self.guild_queues[ctx.guild] = [] # Reset the player queue to empty
+        user_mentions = ''
+
+        for user in self.popped_guild_queues[ctx.guild]:
+            user_mentions += user.mention
+
+        popflash_cog = self.bot.get_cog('PopflashCog') # NOTE: This is tied to the PopflashCog name so they need to be the same!
+
+        if popflash_cog:
+            popflash_url = popflash_cog.get_popflash_url(ctx.guild)
+            description = f'[Join the PopFlash lobby here]({popflash_url})'
+        else:
+            description = ''
+
+        pop_embed = discord.Embed(title='Queue has filled up!', description=description, color=self.color)
+        return user_mentions, pop_embed
+
     @commands.command(brief='Join the queue')
     async def join(self, ctx):
         """ Check if the member can be added to the guild queue and add them if so """
@@ -55,24 +74,9 @@ class QueueCog(commands.Cog):
 
         # Check and pop queue if full
         if len(queue) == self.spots:
-            self.popped_guild_queues[ctx.guild] = self.guild_queues.pop(ctx.guild, None) # Save who was in the queue for player draft
-            self.guild_queues[ctx.guild] = [] # Reset the player queue to empty
-            user_mentions = ''
-
-            for user in queue:
-                user_mentions += user.mention
-
-            popflash_cog = self.bot.get_cog('PopflashCog') # NOTE: This is tied to the PopflashCog name so they need to be the same!
-
-            if popflash_cog:
-                popflash_url = popflash_cog.get_popflash_url(ctx.guild)
-                description = f'[Join the PopFlash lobby here]({popflash_url})'
-            else:
-                description = ''
-
-            pop_embed = discord.Embed(title='Queue has filled up!', description=description, color=self.color)
+            user_mentions, pop_embed = self.pop_queue(ctx)
             await ctx.send(embed=join_embed)
-            await ctx.trigger_typing()
+            await ctx.trigger_typing() # Need to retrigger typing for second send
             await ctx.send(user_mentions, embed=pop_embed)
         else:
             await ctx.send(embed=join_embed)
@@ -86,7 +90,7 @@ class QueueCog(commands.Cog):
             queue.remove(ctx.author)
             embed = discord.Embed(title=f'**{ctx.author.display_name}** has been removed from the queue _({len(queue)}/{self.spots})_', color=self.color)
         else:
-            embed = discord.Embed(title=f'**{ctx.author.display_name}** was never in the queue', color=self.color)
+            embed = discord.Embed(title=f'**{ctx.author.display_name}** isn\'t in the queue', color=self.color)
 
         await ctx.channel.send(embed=embed)
 
@@ -105,10 +109,60 @@ class QueueCog(commands.Cog):
         embed.set_footer(text='Players will receive a notification when the queue fills up')
         await ctx.send(embed=embed)
 
-    @commands.command(brief='Empty the queue')
+    @commands.command(name='remove \{mention\}', brief='Remove the mentioned user from the queue (Must have server kick perms)')
+    @commands.has_permissions(kick_members=True)
+    async def remove(self, ctx):
+        try:
+            removee = ctx.message.mentions[0]
+        except IndexError as e:
+            embed = discord.Embed(title='Mention a player in the command to remove them', color=self.color)
+        else:
+            queue = self.guild_queues[ctx.guild]
+            last_popped_queue = self.popped_guild_queues[ctx.guild]
+
+            if removee in queue:
+                queue.remove(removee)
+                embed = discord.Embed(title=f'**{removee}** has been removed from the queue _({len(queue)}/{self.spots})_', color=self.color)
+            elif removee in last_popped_queue:
+                last_popped_queue.remove(removee)
+                embed = discord.Embed(title=f'**{removee}** has been removed from the popped queue', color=self.color)
+                await ctx.send(embed=embed)
+
+                if len(queue) >= 1:
+                    await ctx.trigger_typing() # Need to retrigger typing for second send
+                    save_queue = queue[:]
+                    first_in_queue = save_queue[0]
+                    self.guild_queues[ctx.guild] = last_popped_queue + [first_in_queue]
+                    last_popped_queue = None
+                    dummy, pop_embed = self.pop_queue(ctx)
+                    await ctx.send(user_mentions, embed=pop_embed)
+
+                    if len(queue) > 1:
+                        self.guild_queues[ctx.guild] = save_queue[1:]
+                else:
+                    self.guild_queues[ctx.guild] = last_popped_queue
+                    last_popped_queue = None
+
+                return
+            else:
+                embed = discord.Embed(title=f'**{removee}** is not in the queue or the most recent popped queue', color=self.color)
+
+        await ctx.send(embed=embed)
+
+    @commands.command(brief='Empty the queue (Must have server kick perms)')
+    @commands.has_permissions(kick_members=True)
     async def empty(self, ctx):
         """ Reset the guild queue list to empty """
         queue = self.guild_queues[ctx.guild]
         queue.clear()
         embed = discord.Embed(title=f'The queue has been emptied _({len(queue)}/{self.spots})_', color=self.color)
         await ctx.send(embed=embed)
+
+    @remove.error
+    @empty.error
+    async def remove_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            await ctx.trigger_typing()
+            missing_perm = error.missing_perms[0].replace('_', ' ')
+            embed = discord.Embed(title=f'Cannot remove players without permission to {missing_perm}!', color=self.color)
+            await ctx.send(embed=embed)
