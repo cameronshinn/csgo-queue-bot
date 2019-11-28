@@ -134,7 +134,7 @@ class QueueCog(commands.Cog):
                     first_in_queue = save_queue[0]
                     self.guild_queues[ctx.guild] = last_popped_queue + [first_in_queue]
                     last_popped_queue = None
-                    dummy, pop_embed = self.pop_queue(ctx)
+                    user_mentions, pop_embed = self.pop_queue(ctx)
                     await ctx.send(user_mentions, embed=pop_embed)
 
                     if len(queue) > 1:
