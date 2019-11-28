@@ -109,7 +109,7 @@ class QueueCog(commands.Cog):
         embed.set_footer(text='Players will receive a notification when the queue fills up')
         await ctx.send(embed=embed)
 
-    @commands.command(brief='Remove the mentioned user from the queue (Must have server kick perms)')
+    @commands.command(usage='q!remove \{user mention\}', brief='Remove the mentioned user from the queue (Must have server kick perms)')
     @commands.has_permissions(kick_members=True)
     async def remove(self, ctx):
         try:
