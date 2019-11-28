@@ -24,7 +24,7 @@ class PopflashCog(commands.Cog):
         """ Trigger typing at the start of every command """
         await ctx.trigger_typing()
 
-    @commands.command(brief='Link this server\'s designated PopFlash lobby')
+    @commands.command(brief='Link the server\'s designated PopFlash lobby')
     async def popflash(self, ctx):
         description = f'[Link here]({self.get_popflash_url(ctx.guild)})'
         embed = discord.Embed(title="PopFlash lobby is up!", description=description, color=self.color)

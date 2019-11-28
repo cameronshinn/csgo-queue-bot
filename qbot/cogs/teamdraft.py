@@ -80,7 +80,7 @@ class TeamDraftCog(commands.Cog):
         """ Trigger typing at the start of every command """
         await ctx.trigger_typing()
 
-    @commands.command(brief='Start (or restart) a player draft from the last filled queue')
+    @commands.command(brief='Start (or restart) a player draft from the last popped queue')
     async def tdraft(self, ctx):
         """ Start a player draft by sending a player draft embed panel """
         x_emoji = ':heavy_multiplication_x'

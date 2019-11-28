@@ -7,12 +7,13 @@ This program uses the Discord Python API to manage a bot that manages queues of 
 
 ## Commands
 
-1. `q!help`:             Display help message page
-2. `q!join`:             Join the queue
-3. `q!leave`:            Leave the queue
-4. `q!view`:             Display who is currently in the queue
-5. `q!empty`:            Empty the queue
-6. `q!popflash`:         Link the server's designated PopFlash lobby
-7. `q!pdraft`:           Start (or restart) a player draft
-8. `q!mdraft`:           Start (or restart) a map draft
-9. `q!about`:            Display information about the 10-Man Queue bot
+`q!help`:<br>Display help menu<br><br>
+`q!about`:<br>Display basic info about this bot<br><br>
+`q!join`:<br>Join the queue<br><br>
+`q!leave`:<br>Leave the queue<br><br>
+`q!view`:<br>Display who is currently in the queue<br><br>
+`q!remove {mention}`:<br>Remove the mentioned user from the queue (Must have server kick perms)<br><br>
+`q!empty`:<br>Empty the queue (Must have server kick perms)<br><br>
+`q!pdraft`:<br>Start (or restart) a team draft from the last popped queue<br><br>
+`q!mdraft`:<br>Start (or restart) a map draft<br><br>
+`q!popflash`:<br>Link the server's designated PopFlash lobby<br><br>
