@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# mapDraft.py
+# mapdraft.py
 # cameronshinn
 
 import discord
@@ -93,7 +93,7 @@ class MapDraftCog(commands.Cog):
 
         maps_left = self.guild_maps_left[guild]
 
-        for m in maps_left:
+        for m in maps_left.copy():  # Iterate over copy to modify original w/o consequences
             if str(reaction.emoji) == m.emoji:
                 async for u in reaction.users():
                     await reaction.remove(u)
@@ -116,3 +116,5 @@ class MapDraftCog(commands.Cog):
                     embed.set_thumbnail(url=m.image_url)
                     embed.set_footer(text=self.footer)
                     await msg.edit(embed=embed)
+
+                break

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# teamDraft.py
+# teamdraft.py
 # cameronshinn
 
 import discord
