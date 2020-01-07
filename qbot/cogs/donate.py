@@ -17,7 +17,7 @@ class DonateCog(commands.Cog):
 
     def get_donation_url(self, guild):
         """ Generate Donation link based on specific bot instance """
-        return self.donate_token
+        return self.donate_url
 
     async def cog_before_invoke(self, ctx):
         """ Trigger typing at the start of every command """
