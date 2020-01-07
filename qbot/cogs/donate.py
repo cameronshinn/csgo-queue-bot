@@ -9,7 +9,7 @@ from discord.ext import commands
 class DonateCog(commands.Cog):
     """ Cog to manage interactions with Donate Link """
 
-    def __init__(self, bot, color, donate_token):
+    def __init__(self, bot, color, donate_url):
         """ Set attributes """
         self.bot = bot
         self.color = color
