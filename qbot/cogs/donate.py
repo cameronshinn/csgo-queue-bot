@@ -21,6 +21,6 @@ class DonateCog(commands.Cog):
 
     @commands.command(brief='Link the server\'s designated Donation link')
     async def donate(self, ctx):
-        description = f'[Link here]({self.donate_url(ctx.guild)})'
+        description = f'[Link here]({self.donate_url})'
         embed = discord.Embed(title="Feel free to donate here: ", description=description, color=self.color)
         await ctx.send(embed=embed)
