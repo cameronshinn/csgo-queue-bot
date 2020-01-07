@@ -13,7 +13,7 @@ class DonateCog(commands.Cog):
         """ Set attributes """
         self.bot = bot
         self.color = color
-        self.donate_token = donate_token
+        self.donate_url = donate_url
 
     async def cog_before_invoke(self, ctx):
         """ Trigger typing at the start of every command """
