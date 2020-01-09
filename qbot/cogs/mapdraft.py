@@ -69,6 +69,7 @@ class MapDraftCog(commands.Cog):
     @commands.command(brief='Start (or restart) a map draft')
     async def mdraft(self, ctx):
         """ Start a map draft by sending a map draft embed panel """
+        self.guild_maps_left[ctx.guild] = self.map_pool.copy()  # Set or reset map pool
         embed = discord.Embed(title='Map draft has begun!', description=self.maps_left_str(ctx.guild), color=self.color)
         embed.set_footer(text=self.footer)
         msg = await ctx.send(embed=embed)
@@ -77,7 +78,6 @@ class MapDraftCog(commands.Cog):
         for m in self.map_pool:
             await msg.add_reaction(m.emoji)
 
-        self.guild_maps_left[ctx.guild] = self.map_pool.copy()
         self.guild_msgs[ctx.guild] = msg
 
     @commands.Cog.listener()
