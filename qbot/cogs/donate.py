@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# popflash.py
+# donate.py
 # cameronshinn
 
 import discord
