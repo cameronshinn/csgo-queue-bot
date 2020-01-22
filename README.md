@@ -29,12 +29,21 @@ Now you are ready to start using the CS:GO Queue Bot! Try out some of the comman
 
 ## Commands
 `q!help`: Display help menu<br>
-`q!about`:Display basic info about this bot<br>
-`q!join`:Join the queue<br>
-`q!leave`:Leave the queue<br>
-`q!view`:Display who is currently in the queue<br>
-`q!remove {mention}`:Remove the mentioned user from the queue (Must have server kick perms)<br>
-`q!empty`:Empty the queue (Must have server kick perms)<br>
-`q!pdraft`:Start (or restart) a team draft from the last popped queue<br>
-`q!mdraft`:Start (or restart) a map draft<br>
-`q!popflash`:Link the server's designated PopFlash lobby<br>
+
+`q!about`: Display basic info about this bot<br>
+
+`q!join`: Join the queue<br>
+
+`q!leave`: Leave the queue<br>
+
+`q!view`: Display who is currently in the queue<br>
+
+`q!remove {mention}`: Remove the mentioned user from the queue (Must have server kick perms)<br>
+
+`q!empty`: Empty the queue (Must have server kick perms)<br>
+
+`q!pdraft`: Start (or restart) a team draft from the last popped queue<br>
+
+`q!mdraft`: Start (or restart) a map draft<br>
+
+`q!popflash`: Link the server's designated PopFlash lobby<br>
