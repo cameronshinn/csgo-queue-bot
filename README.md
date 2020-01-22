@@ -38,7 +38,7 @@ Now you are ready to start using the CS:GO Queue Bot! Try out some of the comman
 
 `q!view`: Display who is currently in the queue<br>
 
-`q!remove {mention}`: Remove the mentioned user from the queue (Must have server kick perms)<br>
+`q!remove <mention>`: Remove the mentioned user from the queue (Must have server kick perms)<br>
 
 `q!empty`: Empty the queue (Must have server kick perms)<br>
 
