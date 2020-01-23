@@ -30,7 +30,7 @@ class ConsoleCog(commands.Cog):
     async def on_ready(self):
         """ Print basic bot info and server list and sets status on startup. """
         print(self.startup_banner)
-        print(f'\nBot is online in {len(self.bot.guilds)} servers')
+        print(f'\nBot is online in {len(self.bot.guilds)} servers\n')
 
     @commands.Cog.listener()
     async def on_command(self, ctx):
