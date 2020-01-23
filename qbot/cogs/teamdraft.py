@@ -16,39 +16,40 @@ EMOJI_LIST = [u'\u0031\u20E3',
               u'\u0039\u20E3',
               u'\U0001F51F']
 
+
 class TeamDraftCog(commands.Cog):
-    """ Handles the player drafter command """
+    """ Handles the player drafter command. """
 
     def __init__(self, bot, color):
-        """ Set attributes and initialize empty draft teams """
+        """ Set attributes and initialize empty draft teams. """
         self.bot = bot
         self.color = color
-        self.guild_player_pool = {} # Players participating in the draft for each guild
-        self.guild_teams = {} # Teams for each guild
-        self.guild_msgs = {} # Last team draft embed message sent for each guild
+        self.guild_player_pool = {}  # Players participating in the draft for each guild
+        self.guild_teams = {}  # Teams for each guild
+        self.guild_msgs = {}  # Last team draft embed message sent for each guild
 
     @commands.Cog.listener()
     async def on_ready(self):
-        """ Initialize an empty list for each giuld the bot is in """
+        """ Initialize an empty list for each giuld the bot is in. """
         for guild in self.bot.guilds:
             self.guild_player_pool[guild] = []
             self.guild_teams[guild] = [[], []]
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
-        """ Initialize an empty list for guilds that are added """
+        """ Initialize an empty list for guilds that are added. """
         self.guild_player_pool[guild] = []
         self.guild_teams[guild] = [[], []]
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
-        """ Remove queue list when a guild is removed """
+        """ Remove queue list when a guild is removed. """
         self.guild_player_pool.pop(guild, None)
         self.guild_teams.pop(guild, None)
         self.guild_msgs.pop(guild, None)
 
     def player_draft_embed(self, title, guild):
-        """ Return the player draft embed based on the guild attributes """
+        """ Return the player draft embed based on the guild attributes. """
         team_1 = self.guild_teams[guild][0]
         team_2 = self.guild_teams[guild][1]
         embed = discord.Embed(title=title, color=self.color)
@@ -77,20 +78,20 @@ class TeamDraftCog(commands.Cog):
         return embed
 
     async def cog_before_invoke(self, ctx):
-        """ Trigger typing at the start of every command """
+        """ Trigger typing at the start of every command. """
         await ctx.trigger_typing()
 
     @commands.command(brief='Start (or restart) a player draft from the last popped queue')
     async def tdraft(self, ctx):
-        """ Start a player draft by sending a player draft embed panel """
-        x_emoji = ':heavy_multiplication_x'
+        """ Start a player draft by sending a player draft embed panel. """
         queue_cog = self.bot.get_cog('QueueCog')
         players = queue_cog.popped_guild_queues.get(ctx.guild)
 
         if players is None:
             in_queue = len(queue_cog.guild_queues[ctx.guild])
             spots = queue_cog.spots
-            embed = discord.Embed(title=f'Cannot start player draft until the queue is full! _({in_queue}/{spots})_', color=self.color)
+            embed_title = f'Cannot start player draft until the queue is full! _({in_queue}/{spots})_'
+            embed = discord.Embed(title=embed_title, color=self.color)
         else:
             self.guild_player_pool[ctx.guild] = dict(zip(EMOJI_LIST, players))
             self.guild_teams[ctx.guild] = [[], []]
@@ -114,12 +115,12 @@ class TeamDraftCog(commands.Cog):
         if guild not in self.guild_msgs.keys() or reaction.message.id != self.guild_msgs[guild].id:
             return
 
-        players = self.guild_player_pool[guild] # Get player dictionary for corresponding guild
+        players = self.guild_player_pool[guild]  # Get player dictionary for corresponding guild
         player_pick = players.get(str(reaction.emoji))
         team_1 = self.guild_teams[guild][0]
         team_2 = self.guild_teams[guild][1]
 
-        if user not in [p for e, p in players.items()]: # TODO: Change player dict to list
+        if user not in [p for e, p in players.items()]:  # TODO: Change player dict to list
             return
 
         # Ignore if emoji doesn't correspond to player or they're already on a team
@@ -148,7 +149,8 @@ class TeamDraftCog(commands.Cog):
                 team_2.append(player_pick)
                 picked_team = team_2
 
-            title = f'**{user.display_name}** picked **{player_pick.display_name}** for **Team {picked_team[0].display_name}**'
+            team_first = picked_team[0].display_name
+            title = f'**{user.display_name}** picked **{player_pick.display_name}** for **Team {team_first}**'
 
         embed = self.player_draft_embed(title, guild)
         await self.guild_msgs[guild].edit(embed=embed)
