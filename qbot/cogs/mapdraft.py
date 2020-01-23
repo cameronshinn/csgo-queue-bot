@@ -22,7 +22,7 @@ cache = Map('Cache', 'de_cache', '<:de_cache:632416021910650919>',
 cbble = Map('Cobblestone', 'de_cbble', '<:de_cbble:632416085899214848>',
             'https://raw.githubusercontent.com/cameronshinn/csgo-queue-bot/master/assets/map_images/cobblestone.jpg')
 dust2 = Map('Dust II', 'de_dust2', '<:de_dust2:632416148658323476>',
-            'raw.githubusercontent.com/cameronshinn/csgo-queue-bot/master/assets/map_images/dust_ii.jpg')
+            'https://raw.githubusercontent.com/cameronshinn/csgo-queue-bot/master/assets/map_images/dust_ii.jpg')
 inferno = Map('Inferno', 'de_inferno', '<:de_inferno:632416390112084008>',
               'https://raw.githubusercontent.com/cameronshinn/csgo-queue-bot/master/assets/map_images/inferno.jpg')
 mirage = Map('Mirage', 'de_mirage', '<:de_mirage:632416441551028225>',
