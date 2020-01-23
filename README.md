@@ -9,7 +9,7 @@ This script uses the Discord Python API via a bot to manage queues of CS:GO play
 ## Setup
 1. First you must have a bot instance to run this script on. Follow Discord's tutorial [here](https://discord.onl/2019/03/21/how-to-set-up-a-bot-application/) on how to set one up. Be sure to invite it to a server to use it.
 
-2. (Optional) If you have a Discord Bot List token to use with [top.gg]() then retrieve that from its editing menu.
+2. (Optional) If you have a Discord Bot List token to use with [top.gg](https://top.gg/) then retrieve that from its editing menu.
 
 3. Run `pip3 install -r requirements.txt` in the repository's root directory to get the necessary libraries.
 
