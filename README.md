@@ -27,6 +27,7 @@ qbot.run(discord_token=DISCORD_TOKEN, dbl_token=DBL_TOKEN)
 
 Now you are ready to start using the CS:GO Queue Bot! Try out some of the commands to make sure it works.
 
+
 ## Commands
 `q!help`: Display help menu<br>
 
@@ -47,3 +48,8 @@ Now you are ready to start using the CS:GO Queue Bot! Try out some of the comman
 `q!mdraft`: Start (or restart) a map draft<br>
 
 `q!popflash`: Link the server's designated PopFlash lobby<br>
+
+
+## Contributions
+
+This project adheres to the [PEP8 style guide](https://www.python.org/dev/peps/pep-0008/) with 120 character line limits.
