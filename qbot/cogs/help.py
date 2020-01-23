@@ -16,7 +16,7 @@ class HelpCog(commands.Cog):
         """ Set attributes and remove default help command. """
         self.bot = bot
         self.color = color
-        self.thumbnail = 'raw.githubusercontent.com/cameronshinn/csgo-queue-bot/master/assets/logo/rounded_logo.png'
+        self.logo = 'https://raw.githubusercontent.com/cameronshinn/csgo-queue-bot/master/assets/logo/rounded_logo.png
         self.bot.remove_command('help')
 
     def help_embed(self, title):
@@ -71,5 +71,5 @@ class HelpCog(commands.Cog):
         github_link = '[Source code can be found here on GitHub](https://github.com/cameronshinn/csgo-queue-bot)'
         description = f'{header}\n\n{support_link}\n{topgg_link}\n{github_link}'
         embed = discord.Embed(title='__10-ManQ Queue Bot__', description=description, color=self.color)
-        embed.set_thumbnail(url=self.thumbnail)
+        embed.set_thumbnail(url=self.logo)
         await ctx.send(embed=embed)
