@@ -27,6 +27,10 @@ qbot.run(discord_token=DISCORD_TOKEN, dbl_token=DBL_TOKEN)
 
 Now you are ready to start using the CS:GO Queue Bot! Try out some of the commands to make sure it works.
 
+## Contributions
+
+This project adheres to the PEP 8 style guide which can be found [here](https://www.python.org/dev/peps/pep-0008/).
+
 ## Commands
 `q!help`: Display help menu<br>
 
