@@ -1,6 +1,6 @@
 <img src="assets/logo/rounded_logo.png" alt="10-Man Queues" align="right" width="50" height="50"/>
 
-# CS:GO Queue Bot &ensp; [![Discord Bots](https://top.gg/api/widget/status/539669626863353868.svg)](https://top.gg/bot/539669626863353868)
+# CS:GO Queue Bot &ensp; [![Discord Bots](https://top.gg/api/widget/status/539669626863353868.svg?noavatar=true)](https://top.gg/bot/539669626863353868) [![Discord Bots](https://top.gg/api/widget/servers/539669626863353868.svg?noavatar=true)](https://top.gg/bot/539669626863353868)
 *A Discord bot to manage and setup CS:GO games*
 
 This script uses the Discord Python API via a bot to manage queues of CS:GO players who want to play with other Discord server members. It is complete with a queueing system, team drafter, map drafter and a link to a unique PopFlash lobby.
