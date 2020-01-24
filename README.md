@@ -56,7 +56,7 @@ Now you are ready to start using the CS:GO Queue Bot! Try out some of the comman
 This project adheres to the [PEP8 style guide](https://www.python.org/dev/peps/pep-0008/) with 120 character line limits.
 
 ### Branches
-If you are working on an issue create a branch with the issue number and name like so: `100_Title-Separated-By-Dashes`
+Create a branch if you're working on an issue with the issue number and name like so: `100_Title-Separated-By-Dashes`.
 
 ### Commit Messages
 Phrase commits in the present tense, e.g. `Fix bug` instead of `Fixed bug`.
