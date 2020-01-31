@@ -45,6 +45,11 @@ class QueueCog(commands.Cog):
         """ Trigger typing at the start of every command. """
         await ctx.trigger_typing()
 
+    def cap_str(self, guild):
+        """ Generate string showing how full queue is. """
+        queue = self.guild_queues[guild]
+        return f'({len(queue.active)}/{queue.capacity})'
+
     def burst_queue(self, guild):
         queue = self.guild_queues[guild]
         queue.bursted = queue.active  # Save bursted queue for player draft
@@ -69,11 +74,11 @@ class QueueCog(commands.Cog):
         if ctx.author in queue.active:  # Author already in queue
             join_embed = discord.Embed(title=f'**{ctx.author.display_name}** is already in the queue', color=self.color)
         elif len(queue.active) >= queue.capacity:  # Queue full
-            title = f'Unable to add **{ctx.author.display_name}**\nQueue is full _({len(queue.active)}/{queue.capacity})_'
+            title = f'Unable to add **{ctx.author.display_name}**\nQueue is full ({len(queue.active)}/{queue.capacity})'
             join_embed = discord.Embed(title=title, color=self.color)
         else:  # Open spot in queue
             queue.active.append(ctx.author)
-            title = f'**{ctx.author.display_name}** has been added to the queue _({len(queue.active)}/{queue.capacity})_'
+            title = f'**{ctx.author.display_name}** has been added to the queue {self.cap_str(ctx.guild)}'
             join_embed = discord.Embed(title=title, color=self.color)
 
         # Check and burst queue if full
@@ -92,7 +97,7 @@ class QueueCog(commands.Cog):
 
         if ctx.author in queue.active:
             queue.active.remove(ctx.author)
-            title = f'**{ctx.author.display_name}** has been removed from the queue _({len(queue.active)}/{queue.capacity})_'
+            title = f'**{ctx.author.display_name}** has been removed from the queue {self.cap_str(ctx.guild)}'
             embed = discord.Embed(title=title, color=self.color)
         else:
             embed = discord.Embed(title=f'**{ctx.author.display_name}** isn\'t in the queue', color=self.color)
@@ -126,11 +131,12 @@ class QueueCog(commands.Cog):
 
             if removee in queue.active:
                 queue.active.remove(removee)
-                title = f'**{removee.display_name}** has been removed from the queue _({len(queue.active)}/{queue.capacity})_'
+                title = f'**{removee.display_name}** has been removed from the queue {self.cap_str(ctx.guild)}'
                 embed = discord.Embed(title=title, color=self.color)
             elif queue.bursted and removee in queue.bursted:
                 queue.bursted.remove(removee)
-                embed = discord.Embed(title=f'**{removee.display_name}** has been removed from the filled queue', color=self.color)
+                embed = discord.Embed(title=f'**{removee.display_name}** has been removed from the filled queue',
+                                      color=self.color)
                 await ctx.send(embed=embed)
 
                 if len(queue.active) >= 1:
@@ -161,7 +167,7 @@ class QueueCog(commands.Cog):
         """ Reset the guild queue list to empty. """
         queue = self.guild_queues[ctx.guild]
         queue.active.clear()
-        embed = discord.Embed(title=f'The queue has been emptied _({len(queue.active)}/{queue.capacity})_', color=self.color)
+        embed = discord.Embed(title=f'The queue has been emptied {self.cap_str(ctx.guild)}', color=self.color)
         await ctx.send(embed=embed)
 
     @remove.error
