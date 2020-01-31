@@ -34,7 +34,7 @@ class QueueCog(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
         """ Initialize an empty list for guilds that are added. """
-        self.guild_queues[queue] = QQueue()
+        self.guild_queues[guild] = QQueue()
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
