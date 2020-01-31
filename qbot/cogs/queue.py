@@ -5,6 +5,7 @@
 import discord
 from discord.ext import commands
 
+
 class QQueue:
     """ Queue class for the bot. """
 
