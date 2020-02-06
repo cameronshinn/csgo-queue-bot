@@ -11,7 +11,7 @@ class QQueue:
 
     def __init__(self, active=None, capacity=10, bursted=None, timeout=None):
         """ Set attributes. """
-		# Assign empty lists inside function to make them unique to objects
+        # Assign empty lists inside function to make them unique to objects
         self.active = [] if active is None else active  # List of players in the queue
         self.capacity = capacity  # Max queue size
         self.bursted = [] if bursted is None else bursted  # Cached last filled queue
