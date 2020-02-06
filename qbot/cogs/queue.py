@@ -9,12 +9,17 @@ from discord.ext import commands
 class QQueue:
     """ Queue class for the bot. """
 
-    def __init__(self, active=[], capacity=10, bursted=None, timeout=None):
+    def __init__(self, active=[], capacity=10, bursted=[], timeout=None):
         """ Set attributes. """
         self.active = active  # List of players in the queue
         self.capacity = capacity  # Max queue size
-        self.bursted = bursted  # Cached lst filled queue
+        self.bursted = bursted  # Cached last filled queue
         # self.timeout = timeout  # Number of minutes of inactivity after which to empty the queue
+
+    @property
+    def is_default(self):
+        """ Indicate whether the QQueue has any non-default values. """
+        return self.active == [] and self.capacity == 10 and self.bursted == []
 
 
 class QueueCog(commands.Cog):
@@ -26,11 +31,22 @@ class QueueCog(commands.Cog):
         self.guild_queues = {}  # Maps Guild -> QQueue
         self.color = color
 
+    @property
+    def cache_data(self):
+        """ Property returning guild dict of data for CacherCog. """
+        return self.guild_queues
+
+    @cache_data.setter
+    def cache_data(self, d):
+        """ Setter assigning the guild dict from CacherCog. """
+        self.guild_queues = d
+
     @commands.Cog.listener()
     async def on_ready(self):
         """ Initialize an empty list for each giuld the bot is in. """
         for guild in self.bot.guilds:
-            self.guild_queues[guild] = QQueue()
+            if guild not in self.guild_queues:  # Don't add empty queue if guild already loaded
+                self.guild_queues[guild] = QQueue()
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
@@ -145,7 +161,7 @@ class QueueCog(commands.Cog):
                     saved_queue = queue.active.copy()
                     first_in_queue = saved_queue[0]
                     queue.active = queue.bursted + [first_in_queue]
-                    queue.bursted = None
+                    queue.bursted = []
                     pop_embed, user_mentions = self.burst_queue(ctx.guild)
                     await ctx.send(user_mentions, embed=pop_embed)
 
@@ -153,7 +169,7 @@ class QueueCog(commands.Cog):
                         queue.active = saved_queue[1:]
                 else:
                     queue.active = queue.bursted
-                    queue.bursted = None
+                    queue.bursted = []
 
                 return
             else:
