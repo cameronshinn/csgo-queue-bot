@@ -36,7 +36,7 @@ class CacherCog(commands.Cog):
         # Find bot's cogs with 'cache_data' property
         cache_cogs = (cog for cog in self.bot.cogs.values() if hasattr(cog, 'cache_data'))
 
-        data = {} # Return combined guild dictionary with data from all cogs
+        data = {}  # Return combined guild dictionary with data from all cogs
 
         # Construct save dictionary
         for guild in self.bot.guilds:
@@ -59,7 +59,8 @@ class CacherCog(commands.Cog):
             return
 
         undec = json.load(open(self.guild_data_file, 'r'))  # Read JSON into dictionary
-        get_users = lambda users: [self.bot.get_user(u['id']) for u in users]  # Gets list of users from IDs
+
+        def get_users(users): return [self.bot.get_user(u['id']) for u in users]  # Gets list of users from IDs
 
         for guild_id, guild_data in undec.items():
             guild = self.bot.get_guild(int(guild_id))  # Get guild from ID

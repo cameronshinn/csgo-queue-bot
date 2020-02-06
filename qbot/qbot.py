@@ -3,7 +3,6 @@
 # cameronshinn
 
 from discord.ext import commands
-import json
 
 from cogs.cacher import CacherCog
 from cogs.console import ConsoleCog
@@ -45,4 +44,3 @@ def run(discord_token, dbl_token=None, donate_url=None):
             cacher_cog.save()  # Save guild data
 
         print('Saved guild data before termination')
-
