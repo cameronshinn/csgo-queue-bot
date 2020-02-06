@@ -9,11 +9,12 @@ from discord.ext import commands
 class QQueue:
     """ Queue class for the bot. """
 
-    def __init__(self, active=[], capacity=10, bursted=[], timeout=None):
+    def __init__(self, active=None, capacity=10, bursted=None, timeout=None):
         """ Set attributes. """
-        self.active = active  # List of players in the queue
+		# Assign empty lists inside function to make them unique to objects
+        self.active = [] if active is None else active  # List of players in the queue
         self.capacity = capacity  # Max queue size
-        self.bursted = bursted  # Cached last filled queue
+        self.bursted = [] if bursted is None else bursted  # Cached last filled queue
         # self.timeout = timeout  # Number of minutes of inactivity after which to empty the queue
 
     @property
@@ -56,7 +57,7 @@ class QueueCog(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
         """ Remove queue list when a guild is removed. """
-        self.guild_queues.pop(guild, None)
+        self.guild_queues.pop(guild)
 
     async def cog_before_invoke(self, ctx):
         """ Trigger typing at the start of every command. """
