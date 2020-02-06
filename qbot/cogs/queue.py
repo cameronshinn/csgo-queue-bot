@@ -6,77 +6,101 @@ import discord
 from discord.ext import commands
 
 
+class QQueue:
+    """ Queue class for the bot. """
+
+    def __init__(self, active=[], capacity=10, bursted=[], timeout=None):
+        """ Set attributes. """
+        self.active = active  # List of players in the queue
+        self.capacity = capacity  # Max queue size
+        self.bursted = bursted  # Cached last filled queue
+        # self.timeout = timeout  # Number of minutes of inactivity after which to empty the queue
+
+    @property
+    def is_default(self):
+        """ Indicate whether the QQueue has any non-default values. """
+        return self.active == [] and self.capacity == 10 and self.bursted == []
+
+
 class QueueCog(commands.Cog):
     """ Cog to manage queues of players among multiple servers. """
 
     def __init__(self, bot, color):
         """ Set attributes. """
         self.bot = bot
-        self.spots = 10
-        self.guild_queues = {}  # Maps guild -> list of players in the queue for that guild
-        self.popped_guild_queues = {}  # Maps guild -> the most recent queue filled
+        self.guild_queues = {}  # Maps Guild -> QQueue
         self.color = color
+
+    @property
+    def cache_data(self):
+        """ Property returning guild dict of data for CacherCog. """
+        return self.guild_queues
+
+    @cache_data.setter
+    def cache_data(self, d):
+        """ Setter assigning the guild dict from CacherCog. """
+        self.guild_queues = d
 
     @commands.Cog.listener()
     async def on_ready(self):
         """ Initialize an empty list for each giuld the bot is in. """
         for guild in self.bot.guilds:
-            self.guild_queues[guild] = []
-            self.popped_guild_queues[guild] = None
+            if guild not in self.guild_queues:  # Don't add empty queue if guild already loaded
+                self.guild_queues[guild] = QQueue()
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
         """ Initialize an empty list for guilds that are added. """
-        self.guild_queues[guild] = []
-        self.popped_guild_queues[guild] = None
+        self.guild_queues[guild] = QQueue()
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
         """ Remove queue list when a guild is removed. """
         self.guild_queues.pop(guild, None)
-        self.popped_guild_queues.pop(guild, None)
 
     async def cog_before_invoke(self, ctx):
         """ Trigger typing at the start of every command. """
         await ctx.trigger_typing()
 
-    def pop_queue(self, ctx):
-        self.popped_guild_queues[ctx.guild] = self.guild_queues.pop(ctx.guild, None)  # Save queue for player draft
-        self.guild_queues[ctx.guild] = []  # Reset the player queue to empty
-        user_mentions = ''
+    def cap_str(self, guild):
+        """ Generate string showing how full queue is. """
+        queue = self.guild_queues[guild]
+        return f'({len(queue.active)}/{queue.capacity})'
 
-        for user in self.popped_guild_queues[ctx.guild]:
-            user_mentions += user.mention
-
-        popflash_cog = self.bot.get_cog('PopflashCog')  # NOTE: This is tied to PopflashCog name
+    def burst_queue(self, guild):
+        queue = self.guild_queues[guild]
+        queue.bursted = queue.active  # Save bursted queue for player draft
+        queue.active = []  # Reset the player queue to empty
+        user_mentions = ''.join(user.mention for user in queue.bursted)
+        popflash_cog = self.bot.get_cog('PopflashCog')
 
         if popflash_cog:
-            popflash_url = popflash_cog.get_popflash_url(ctx.guild)
+            popflash_url = popflash_cog.get_popflash_url(guild)
             description = f'[Join the PopFlash lobby here]({popflash_url})'
         else:
             description = ''
 
         pop_embed = discord.Embed(title='Queue has filled up!', description=description, color=self.color)
-        return user_mentions, pop_embed
+        return pop_embed, user_mentions
 
     @commands.command(brief='Join the queue')
     async def join(self, ctx):
         """ Check if the member can be added to the guild queue and add them if so. """
         queue = self.guild_queues[ctx.guild]
 
-        if ctx.author in queue:  # Author already in queue
+        if ctx.author in queue.active:  # Author already in queue
             join_embed = discord.Embed(title=f'**{ctx.author.display_name}** is already in the queue', color=self.color)
-        elif len(queue) >= self.spots:  # Queue full
-            title = f'Unable to add **{ctx.author.display_name}**\nQueue is full _({len(queue)}/{self.spots})_'
+        elif len(queue.active) >= queue.capacity:  # Queue full
+            title = f'Unable to add **{ctx.author.display_name}**\nQueue is full ({len(queue.active)}/{queue.capacity})'
             join_embed = discord.Embed(title=title, color=self.color)
         else:  # Open spot in queue
-            queue.append(ctx.author)
-            title = f'**{ctx.author.display_name}** has been added to the queue _({len(queue)}/{self.spots})_'
+            queue.active.append(ctx.author)
+            title = f'**{ctx.author.display_name}** has been added to the queue {self.cap_str(ctx.guild)}'
             join_embed = discord.Embed(title=title, color=self.color)
 
-        # Check and pop queue if full
-        if len(queue) == self.spots:
-            user_mentions, pop_embed = self.pop_queue(ctx)
+        # Check and burst queue if full
+        if len(queue.active) == queue.capacity:
+            pop_embed, user_mentions = self.burst_queue(ctx.guild)
             await ctx.send(embed=join_embed)
             await ctx.trigger_typing()  # Need to retrigger typing for second send
             await ctx.send(user_mentions, embed=pop_embed)
@@ -88,9 +112,9 @@ class QueueCog(commands.Cog):
         """ Check if the member can be remobed from the guild and remove them if so. """
         queue = self.guild_queues[ctx.guild]
 
-        if ctx.author in queue:
-            queue.remove(ctx.author)
-            title = f'**{ctx.author.display_name}** has been removed from the queue _({len(queue)}/{self.spots})_'
+        if ctx.author in queue.active:
+            queue.active.remove(ctx.author)
+            title = f'**{ctx.author.display_name}** has been removed from the queue {self.cap_str(ctx.guild)}'
             embed = discord.Embed(title=title, color=self.color)
         else:
             embed = discord.Embed(title=f'**{ctx.author.display_name}** isn\'t in the queue', color=self.color)
@@ -102,9 +126,8 @@ class QueueCog(commands.Cog):
         """  Display the queue as an embed list of mentioned names. """
         queue = self.guild_queues[ctx.guild]
 
-        if queue != []:  # If there are users in the queue
-            enum_queue = enumerate(queue, start=1)
-            queue_str = ''.join(f'{e_usr[0]}. {e_usr[1].mention}\n' for e_usr in enum_queue)
+        if queue.active != []:  # If there are users in the queue
+            queue_str = ''.join(f'{e_usr[0]}. {e_usr[1].mention}\n' for e_usr in enumerate(queue.active, start=1))
         else:  # No users in queue
             queue_str = '_The queue is empty..._'
 
@@ -122,35 +145,35 @@ class QueueCog(commands.Cog):
             embed = discord.Embed(title='Mention a player in the command to remove them', color=self.color)
         else:
             queue = self.guild_queues[ctx.guild]
-            last_popped_queue = self.popped_guild_queues[ctx.guild]
 
-            if removee in queue:
-                queue.remove(removee)
-                title = f'**{removee}** has been removed from the queue _({len(queue)}/{self.spots})_'
+            if removee in queue.active:
+                queue.active.remove(removee)
+                title = f'**{removee.display_name}** has been removed from the queue {self.cap_str(ctx.guild)}'
                 embed = discord.Embed(title=title, color=self.color)
-            elif removee in last_popped_queue:
-                last_popped_queue.remove(removee)
-                embed = discord.Embed(title=f'**{removee}** has been removed from the popped queue', color=self.color)
+            elif queue.bursted and removee in queue.bursted:
+                queue.bursted.remove(removee)
+                embed = discord.Embed(title=f'**{removee.display_name}** has been removed from the filled queue',
+                                      color=self.color)
                 await ctx.send(embed=embed)
 
-                if len(queue) >= 1:
+                if len(queue.active) >= 1:
                     await ctx.trigger_typing()  # Need to retrigger typing for second send
-                    save_queue = queue[:]
-                    first_in_queue = save_queue[0]
-                    self.guild_queues[ctx.guild] = last_popped_queue + [first_in_queue]
-                    last_popped_queue = None
-                    user_mentions, pop_embed = self.pop_queue(ctx)
+                    saved_queue = queue.active.copy()
+                    first_in_queue = saved_queue[0]
+                    queue.active = queue.bursted + [first_in_queue]
+                    queue.bursted = []
+                    pop_embed, user_mentions = self.burst_queue(ctx.guild)
                     await ctx.send(user_mentions, embed=pop_embed)
 
-                    if len(queue) > 1:
-                        self.guild_queues[ctx.guild] = save_queue[1:]
+                    if len(queue.active) > 1:
+                        queue.active = saved_queue[1:]
                 else:
-                    self.guild_queues[ctx.guild] = last_popped_queue
-                    last_popped_queue = None
+                    queue.active = queue.bursted
+                    queue.bursted = []
 
                 return
             else:
-                title = f'**{removee}** is not in the queue or the most recent popped queue'
+                title = f'**{removee.display_name}** is not in the queue or the most recent filled queue'
                 embed = discord.Embed(title=title, color=self.color)
 
         await ctx.send(embed=embed)
@@ -160,8 +183,8 @@ class QueueCog(commands.Cog):
     async def empty(self, ctx):
         """ Reset the guild queue list to empty. """
         queue = self.guild_queues[ctx.guild]
-        queue.clear()
-        embed = discord.Embed(title=f'The queue has been emptied _({len(queue)}/{self.spots})_', color=self.color)
+        queue.active.clear()
+        embed = discord.Embed(title=f'The queue has been emptied {self.cap_str(ctx.guild)}', color=self.color)
         await ctx.send(embed=embed)
 
     @remove.error
