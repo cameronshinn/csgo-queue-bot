@@ -35,12 +35,4 @@ def run(discord_token, dbl_token=None, donate_url=None):
     if donate_url:
         bot.add_cog(DonateCog(bot, BOT_COLOR, donate_url))
 
-    try:
-        bot.run(discord_token)
-    finally:
-        cacher_cog = bot.get_cog('CacherCog')  # Attempt to get CacherCog
-
-        if cacher_cog:  # If bot has CacherCog
-            cacher_cog.save()  # Save guild data
-
-        print('Saved guild data before termination')
+    bot.run(discord_token)
