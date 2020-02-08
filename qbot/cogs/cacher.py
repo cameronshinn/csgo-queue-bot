@@ -34,7 +34,7 @@ class CacherCog(commands.Cog):
     def save(self):
         """ Save guild data to JSON. """
         # Find bot's cogs with 'cache_data' property
-        cache_cogs = (cog for cog in self.bot.cogs.values() if hasattr(cog, 'cache_data'))
+        cache_cogs = [cog for cog in self.bot.cogs.values() if hasattr(cog, 'cache_data')]
 
         data = {}  # Return combined guild dictionary with data from all cogs
 
