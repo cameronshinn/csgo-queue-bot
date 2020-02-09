@@ -85,23 +85,25 @@ class TeamDraftCog(commands.Cog):
     async def tdraft(self, ctx):
         """ Start a player draft by sending a player draft embed panel. """
         queue_cog = self.bot.get_cog('QueueCog')
-        players = queue_cog.popped_guild_queues.get(ctx.guild)
 
-        if players is None:
-            in_queue = len(queue_cog.guild_queues[ctx.guild])
-            spots = queue_cog.spots
-            embed_title = f'Cannot start player draft until the queue is full! _({in_queue}/{spots})_'
+        if not queue_cog:
+            return
+
+        queue = queue_cog.guild_queues.get(ctx.guild)
+
+        if queue.bursted == []:
+            embed_title = f'Cannot start player draft until the queue is full ({len(queue.active)}/{queue.capacity})'
             embed = discord.Embed(title=embed_title, color=self.color)
-        else:
-            self.guild_player_pool[ctx.guild] = dict(zip(EMOJI_LIST, players))
-            self.guild_teams[ctx.guild] = [[], []]
-            embed = self.player_draft_embed('Team draft has begun!', ctx.guild)
+            await ctx.send(embed=embed)
+            return
 
+        self.guild_player_pool[ctx.guild] = dict(zip(EMOJI_LIST, queue.bursted))
+        self.guild_teams[ctx.guild] = [[], []]
+        embed = self.player_draft_embed('Team draft has begun!', ctx.guild)
         msg = await ctx.send(embed=embed)
 
-        if players is not None:
-            for emoji in EMOJI_LIST:
-                await msg.add_reaction(emoji)
+        for emoji in EMOJI_LIST:
+            await msg.add_reaction(emoji)
 
         self.guild_msgs[ctx.guild] = msg
 
