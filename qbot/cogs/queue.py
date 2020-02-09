@@ -9,13 +9,14 @@ from discord.ext import commands
 class QQueue:
     """ Queue class for the bot. """
 
-    def __init__(self, active=None, capacity=10, bursted=None, timeout=None):
+    def __init__(self, active=None, capacity=10, bursted=None, timeout=None, last_msg=None):
         """ Set attributes. """
         # Assign empty lists inside function to make them unique to objects
         self.active = [] if active is None else active  # List of players in the queue
         self.capacity = capacity  # Max queue size
         self.bursted = [] if bursted is None else bursted  # Cached last filled queue
         # self.timeout = timeout  # Number of minutes of inactivity after which to empty the queue
+        self.last_msg = last_msg  # Last sent confirmation message for the join command
 
     @property
     def is_default(self):
@@ -63,10 +64,21 @@ class QueueCog(commands.Cog):
         """ Trigger typing at the start of every command. """
         await ctx.trigger_typing()
 
-    def cap_str(self, guild):
-        """ Generate string showing how full queue is. """
+    def queue_embed(self, guild, title=None):
+        """"""
         queue = self.guild_queues[guild]
-        return f'({len(queue.active)}/{queue.capacity})'
+
+        if title:
+            title += f' ({len(queue.active)}/{queue.capacity})'
+
+        if queue.active != []:  # If there are users in the queue
+            queue_str = ''.join(f'{e_usr[0]}. {e_usr[1].mention}\n' for e_usr in enumerate(queue.active, start=1))
+        else:  # No users in queue
+            queue_str = '_The queue is empty..._'
+
+        embed = discord.Embed(title=title, description=queue_str, color=self.color)
+        embed.set_footer(text='Players will receive a notification when the queue fills up')
+        return embed
 
     def burst_queue(self, guild):
         queue = self.guild_queues[guild]
@@ -90,23 +102,25 @@ class QueueCog(commands.Cog):
         queue = self.guild_queues[ctx.guild]
 
         if ctx.author in queue.active:  # Author already in queue
-            join_embed = discord.Embed(title=f'**{ctx.author.display_name}** is already in the queue', color=self.color)
+            title = f'**{ctx.author.display_name}** is already in the queue'
         elif len(queue.active) >= queue.capacity:  # Queue full
-            title = f'Unable to add **{ctx.author.display_name}**\nQueue is full ({len(queue.active)}/{queue.capacity})'
-            join_embed = discord.Embed(title=title, color=self.color)
+            title = f'Unable to add **{ctx.author.display_name}**: Queue is full'
         else:  # Open spot in queue
             queue.active.append(ctx.author)
-            title = f'**{ctx.author.display_name}** has been added to the queue {self.cap_str(ctx.guild)}'
-            join_embed = discord.Embed(title=title, color=self.color)
+            title = f'**{ctx.author.display_name}** has been added to the queue'
 
         # Check and burst queue if full
         if len(queue.active) == queue.capacity:
-            pop_embed, user_mentions = self.burst_queue(ctx.guild)
-            await ctx.send(embed=join_embed)
-            await ctx.trigger_typing()  # Need to retrigger typing for second send
-            await ctx.send(user_mentions, embed=pop_embed)
+            embed, user_mentions = self.burst_queue(ctx.guild)
+            await ctx.send(user_mentions, embed=embed)
         else:
-            await ctx.send(embed=join_embed)
+            embed = self.queue_embed(ctx.guild, title)
+            await ctx.message.delete()
+
+            if queue.last_msg:
+                await queue.last_msg.delete()
+
+            queue.last_msg = await ctx.send(embed=embed)
 
     @commands.command(brief='Leave the queue')
     async def leave(self, ctx):
@@ -115,26 +129,29 @@ class QueueCog(commands.Cog):
 
         if ctx.author in queue.active:
             queue.active.remove(ctx.author)
-            title = f'**{ctx.author.display_name}** has been removed from the queue {self.cap_str(ctx.guild)}'
-            embed = discord.Embed(title=title, color=self.color)
+            title = f'**{ctx.author.display_name}** has been removed from the queue '
         else:
-            embed = discord.Embed(title=f'**{ctx.author.display_name}** isn\'t in the queue', color=self.color)
+            title = f'**{ctx.author.display_name}** isn\'t in the queue '
 
-        await ctx.channel.send(embed=embed)
+        embed = self.queue_embed(ctx.guild, title)
+        await ctx.message.delete()
+
+        if queue.last_msg:
+            await queue.last_msg.delete()
+
+        queue.last_msg = await ctx.channel.send(embed=embed)
 
     @commands.command(brief='Display who is currently in the queue')
     async def view(self, ctx):
         """  Display the queue as an embed list of mentioned names. """
         queue = self.guild_queues[ctx.guild]
+        embed = self.queue_embed(ctx.guild, 'Players in queue for 10-mans')
+        await ctx.message.delete()
 
-        if queue.active != []:  # If there are users in the queue
-            queue_str = ''.join(f'{e_usr[0]}. {e_usr[1].mention}\n' for e_usr in enumerate(queue.active, start=1))
-        else:  # No users in queue
-            queue_str = '_The queue is empty..._'
+        if queue.last_msg:
+            await queue.last_msg.delete()
 
-        embed = discord.Embed(title='__Players in queue for 10-mans__', description=queue_str, color=self.color)
-        embed.set_footer(text='Players will receive a notification when the queue fills up')
-        await ctx.send(embed=embed)
+        queue.last_msg = await ctx.send(embed=embed)
 
     @commands.command(usage='q!remove <user mention>',
                       brief='Remove the mentioned user from the queue (Must have server kick perms)')
@@ -144,21 +161,18 @@ class QueueCog(commands.Cog):
             removee = ctx.message.mentions[0]
         except IndexError:
             embed = discord.Embed(title='Mention a player in the command to remove them', color=self.color)
+            await ctx.send(embed=embed)
         else:
             queue = self.guild_queues[ctx.guild]
 
             if removee in queue.active:
                 queue.active.remove(removee)
-                title = f'**{removee.display_name}** has been removed from the queue {self.cap_str(ctx.guild)}'
-                embed = discord.Embed(title=title, color=self.color)
+                title = f'**{removee.display_name}** has been removed from the queue'
             elif queue.bursted and removee in queue.bursted:
                 queue.bursted.remove(removee)
-                embed = discord.Embed(title=f'**{removee.display_name}** has been removed from the filled queue',
-                                      color=self.color)
-                await ctx.send(embed=embed)
 
                 if len(queue.active) >= 1:
-                    await ctx.trigger_typing()  # Need to retrigger typing for second send
+                    # await ctx.trigger_typing()  # Need to retrigger typing for second send
                     saved_queue = queue.active.copy()
                     first_in_queue = saved_queue[0]
                     queue.active = queue.bursted + [first_in_queue]
@@ -168,16 +182,23 @@ class QueueCog(commands.Cog):
 
                     if len(queue.active) > 1:
                         queue.active = saved_queue[1:]
+
+                    return
                 else:
                     queue.active = queue.bursted
                     queue.bursted = []
+                    title = f'**{removee.display_name}** has been removed from the most recent filled queue'
 
-                return
             else:
                 title = f'**{removee.display_name}** is not in the queue or the most recent filled queue'
-                embed = discord.Embed(title=title, color=self.color)
 
-        await ctx.send(embed=embed)
+            embed = self.queue_embed(ctx.guild, title)
+            await ctx.message.delete()
+
+            if queue.last_msg:
+                await queue.last_msg.delete()
+
+            queue.last_msg = await ctx.send(embed=embed)
 
     @commands.command(brief='Empty the queue (Must have server kick perms)')
     @commands.has_permissions(kick_members=True)
@@ -185,8 +206,12 @@ class QueueCog(commands.Cog):
         """ Reset the guild queue list to empty. """
         queue = self.guild_queues[ctx.guild]
         queue.active.clear()
-        embed = discord.Embed(title=f'The queue has been emptied {self.cap_str(ctx.guild)}', color=self.color)
-        await ctx.send(embed=embed)
+        embed = self.queue_embed(ctx.guild, 'The queue has been emptied')
+
+        if queue.last_msg:
+            await queue.last_msg.delete()
+
+        queue.last_msg = await ctx.send(embed=embed)
 
     @remove.error
     @empty.error
