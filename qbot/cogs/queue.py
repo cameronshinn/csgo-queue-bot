@@ -115,7 +115,6 @@ class QueueCog(commands.Cog):
             await ctx.send(user_mentions, embed=embed)
         else:
             embed = self.queue_embed(ctx.guild, title)
-            await ctx.message.delete()
 
             if queue.last_msg:
                 await queue.last_msg.delete()
@@ -134,7 +133,6 @@ class QueueCog(commands.Cog):
             title = f'**{ctx.author.display_name}** isn\'t in the queue '
 
         embed = self.queue_embed(ctx.guild, title)
-        await ctx.message.delete()
 
         if queue.last_msg:
             await queue.last_msg.delete()
@@ -146,7 +144,6 @@ class QueueCog(commands.Cog):
         """  Display the queue as an embed list of mentioned names. """
         queue = self.guild_queues[ctx.guild]
         embed = self.queue_embed(ctx.guild, 'Players in queue for 10-mans')
-        await ctx.message.delete()
 
         if queue.last_msg:
             await queue.last_msg.delete()
@@ -193,7 +190,6 @@ class QueueCog(commands.Cog):
                 title = f'**{removee.display_name}** is not in the queue or the most recent filled queue'
 
             embed = self.queue_embed(ctx.guild, title)
-            await ctx.message.delete()
 
             if queue.last_msg:
                 await queue.last_msg.delete()
