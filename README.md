@@ -16,7 +16,7 @@ This script uses the Discord Python API via a bot to manage queues of CS:GO play
 4. Add the `/qbot` path to your `PYTHONPATH` environment variable to be able to import it from anywhere.
 
 5. Using your bot's Discord token and Discord Bot List token, run the bot like so...
-```
+```python
 import qbot
 
 DISCORD_TOKEN = 'XXXXXXXX'
