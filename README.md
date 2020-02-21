@@ -16,7 +16,8 @@ This script uses the Discord Python API via a bot to manage queues of CS:GO play
 4. Add the `/qbot` path to your `PYTHONPATH` environment variable to be able to import it from anywhere.
 
 5. Using your bot's Discord token and Discord Bot List token, run the bot like so...
-```
+
+```python
 import qbot
 
 DISCORD_TOKEN = 'XXXXXXXX'
@@ -24,9 +25,9 @@ DBL_TOKEN = 'XXXXXXXX'
 qbot.run(discord_token=DISCORD_TOKEN, dbl_token=DBL_TOKEN)
 ```
 
-
 Now you are ready to start using the CS:GO Queue Bot! Try out some of the commands to make sure it works.
 
+*Note that currently the `mdraft` command depends on custom emojis to be used as buttons which are hardcoded [here](https://github.com/cameronshinn/csgo-queue-bot/blob/abb06e1876546bb3948094faa795e90184642882/qbot/cogs/mapdraft.py#L20). As of right now you will need to make the emojis yourself and replace the emoji code in the map objects there.*
 
 ## Commands
 `q!help`: Display help menu<br>
