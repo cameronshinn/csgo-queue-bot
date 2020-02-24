@@ -250,4 +250,3 @@ class QueueCog(commands.Cog):
             title = f'Cannot change queue capacity without {missing_perm} permission!'
             embed = discord.Embed(title=title, color=self.color)
             await ctx.send(embed=embed)
-
