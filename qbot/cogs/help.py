@@ -4,6 +4,7 @@
 
 import discord
 from discord.ext import commands
+import Levenshtein as lev
 
 THUMBNAIL = 'https://i.imgur.com/5v6mLwb.png'
 GITHUB = 'github.com/cameronshinn/csgo-queue-bot'
@@ -47,7 +48,24 @@ class HelpCog(commands.Cog):
     async def on_command_error(self, ctx, error):
         """ Send help message when a mis-entered command is received. """
         if type(error) is commands.CommandNotFound:
-            embed = self.help_embed(f'**```{ctx.message.content}```** is not a valid command! Try these instead...')
+            # Get Levenshtein distance from commands
+            in_cmd = ctx.invoked_with
+            bot_cmds = list(self.bot.commands)
+            lev_dists = [lev.distance(in_cmd, str(cmd)) / max(len(in_cmd), len(str(cmd))) for cmd in bot_cmds]
+            lev_min = min(lev_dists)
+
+            # Prep help message title
+            embed_title = f'**```{ctx.message.content}```** is not valid!'
+            prefix = self.bot.command_prefix
+            prefix = prefix[0] if prefix is not str else prefix
+
+            # Make suggestion if lowest Levenshtein distance is under threshold
+            if lev_min <= 0.5:
+                embed_title += f' Did you mean `{prefix}{bot_cmds[lev_dists.index(lev_min)]}`?'
+            else:
+                embed_title += f' Use `{prefix}help` for a list of commands'
+
+            embed = discord.Embed(title=embed_title, color=self.color)
             await ctx.send(embed=embed)
 
     @commands.command(brief='Display the help menu')  # TODO: Add 'or details of the specified command'
