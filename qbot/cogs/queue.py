@@ -212,10 +212,37 @@ class QueueCog(commands.Cog):
     @remove.error
     @empty.error
     async def remove_error(self, ctx, error):
+        """ Respond to a permissions error with an explanation message. """
         if isinstance(error, commands.MissingPermissions):
-            """ Respond to a permissions error with an explanation message. """
             await ctx.trigger_typing()
             missing_perm = error.missing_perms[0].replace('_', ' ')
-            title = f'Cannot remove players without permission to {missing_perm}!'
+            title = f'Cannot remove players without {missing_perm} permission!'
+            embed = discord.Embed(title=title, color=self.color)
+            await ctx.send(embed=embed)
+
+    @commands.command(brief='Set the capacity of the queue (Must have admin perms)')
+    @commands.has_permissions(administrator=True)
+    async def cap(self, ctx, new_cap):
+        """ Set the queue capacity. """
+        try:
+            new_cap = int(new_cap)
+        except ValueError:
+            embed = discord.Embed(title=f'{new_cap} is not an integer', color=self.color)
+        else:
+            if new_cap < 2 or new_cap > 100:
+                embed = discord.Embed(title='Capacity is outside of valid range', color=self.color)
+            else:
+                self.guild_queues[ctx.guild].capacity = new_cap
+                embed = discord.Embed(title=f'Queue capacity set to {new_cap}', color=self.color)
+
+        await ctx.send(embed=embed)
+
+    @cap.error
+    async def cap_error(self, ctx, error):
+        """ Respond to a permissions error with an explanation message. """
+        if isinstance(error, commands.MissingPermissions):
+            await ctx.trigger_typing()
+            missing_perm = error.missing_perms[0].replace('_', ' ')
+            title = f'Cannot change queue capacity without {missing_perm} permission!'
             embed = discord.Embed(title=title, color=self.color)
             await ctx.send(embed=embed)
