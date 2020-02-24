@@ -237,7 +237,7 @@ class QueueCog(commands.Cog):
                 embed = discord.Embed(title='Capacity is outside of valid range', color=self.color)
             else:
                 self.guild_queues[ctx.guild].capacity = new_cap
-                embed = discord.Embed(title=f'Server capacity set to {new_cap}', color=self.color)
+                embed = discord.Embed(title=f'Queue capacity set to {new_cap}', color=self.color)
 
         await ctx.send(embed=embed)
 
