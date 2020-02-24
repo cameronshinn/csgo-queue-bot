@@ -151,7 +151,7 @@ class QueueCog(commands.Cog):
         queue.last_msg = await ctx.send(embed=embed)
 
     @commands.command(usage='q!remove <user mention>',
-                      brief='Remove the mentioned user from the queue (Must have server kick perms)')
+                      brief='Remove the mentioned user from the queue (must have server kick perms)')
     @commands.has_permissions(kick_members=True)
     async def remove(self, ctx):
         try:
@@ -196,7 +196,7 @@ class QueueCog(commands.Cog):
 
             queue.last_msg = await ctx.send(embed=embed)
 
-    @commands.command(brief='Empty the queue (Must have server kick perms)')
+    @commands.command(brief='Empty the queue (must have server kick perms)')
     @commands.has_permissions(kick_members=True)
     async def empty(self, ctx):
         """ Reset the guild queue list to empty. """
