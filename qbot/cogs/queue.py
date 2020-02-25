@@ -119,7 +119,7 @@ class QueueCog(commands.Cog):
             if queue.last_msg:
                 try:
                     await queue.last_msg.delete()
-                except:
+                except discord.errors.NotFound:
                     pass
 
             queue.last_msg = await ctx.send(embed=embed)
@@ -140,7 +140,7 @@ class QueueCog(commands.Cog):
         if queue.last_msg:
             try:
                 await queue.last_msg.delete()
-            except:
+            except discord.errors.NotFound:
                 pass
 
         queue.last_msg = await ctx.channel.send(embed=embed)
@@ -154,7 +154,7 @@ class QueueCog(commands.Cog):
         if queue.last_msg:
             try:
                 await queue.last_msg.delete()
-            except:
+            except discord.errors.NotFound:
                 pass
 
         queue.last_msg = await ctx.send(embed=embed)
@@ -203,7 +203,7 @@ class QueueCog(commands.Cog):
             if queue.last_msg:
                 try:
                     await queue.last_msg.delete()
-                except:
+                except discord.errors.NotFound:
                     pass
 
             queue.last_msg = await ctx.send(embed=embed)
@@ -219,7 +219,7 @@ class QueueCog(commands.Cog):
         if queue.last_msg:
             try:
                 await queue.last_msg.delete()
-            except:
+            except discord.errors.NotFound:
                 pass
 
         queue.last_msg = await ctx.send(embed=embed)
