@@ -117,7 +117,10 @@ class QueueCog(commands.Cog):
             embed = self.queue_embed(ctx.guild, title)
 
             if queue.last_msg:
-                await queue.last_msg.delete()
+                try:
+                    await queue.last_msg.delete()
+                except:
+                    pass
 
             queue.last_msg = await ctx.send(embed=embed)
 
@@ -135,7 +138,10 @@ class QueueCog(commands.Cog):
         embed = self.queue_embed(ctx.guild, title)
 
         if queue.last_msg:
-            await queue.last_msg.delete()
+            try:
+                await queue.last_msg.delete()
+            except:
+                pass
 
         queue.last_msg = await ctx.channel.send(embed=embed)
 
@@ -146,7 +152,10 @@ class QueueCog(commands.Cog):
         embed = self.queue_embed(ctx.guild, 'Players in queue for 10-mans')
 
         if queue.last_msg:
-            await queue.last_msg.delete()
+            try:
+                await queue.last_msg.delete()
+            except:
+                pass
 
         queue.last_msg = await ctx.send(embed=embed)
 
@@ -192,7 +201,10 @@ class QueueCog(commands.Cog):
             embed = self.queue_embed(ctx.guild, title)
 
             if queue.last_msg:
-                await queue.last_msg.delete()
+                try:
+                    await queue.last_msg.delete()
+                except:
+                    pass
 
             queue.last_msg = await ctx.send(embed=embed)
 
@@ -205,7 +217,10 @@ class QueueCog(commands.Cog):
         embed = self.queue_embed(ctx.guild, 'The queue has been emptied')
 
         if queue.last_msg:
-            await queue.last_msg.delete()
+            try:
+                await queue.last_msg.delete()
+            except:
+                pass
 
         queue.last_msg = await ctx.send(embed=embed)
 
