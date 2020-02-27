@@ -13,7 +13,7 @@ This script uses the Discord Python API via a bot to manage queues of CS:GO play
 
 3. Run `pip3 install -r requirements.txt` in the repository's root directory to get the necessary libraries.
 
-    * Note that python-Levenshtein requires your system to have a C++ compiler (Visual Studio C++ compiler for Windows or g++ for Linux). This library may be replaced in the future to eliminate this requirement
+    * Note that python-Levenshtein requires your system to have a C++ compiler (Visual Studio C++ compiler for Windows or g++ for Linux). This library may be replaced in the future to eliminate this requirement.
 
 4. Add the `/qbot` path to your `PYTHONPATH` environment variable to be able to import it from anywhere.
 
