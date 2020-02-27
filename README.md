@@ -32,27 +32,27 @@ Now you are ready to start using the CS:GO Queue Bot! Try out some of the comman
 *Note that currently the `mdraft` command depends on custom emojis to be used as buttons which are hardcoded [here](https://github.com/cameronshinn/csgo-queue-bot/blob/abb06e1876546bb3948094faa795e90184642882/qbot/cogs/mapdraft.py#L20). As of right now you will need to make the emojis yourself and replace the emoji code in the map objects there.*
 
 ## Commands
-`q!help`: Display help menu<br>
+`q!help` **-** Display help menu<br>
 
-`q!about`: Display basic info about this bot<br>
+`q!about` **-** Display basic info about this bot<br>
 
-`q!join`: Join the queue<br>
+`q!join` **-** Join the queue<br>
 
-`q!leave`: Leave the queue<br>
+`q!leave` **-** Leave the queue<br>
 
-`q!view`: Display who is currently in the queue<br>
+`q!view` **-** Display who is currently in the queue<br>
 
-`q!remove <mention>`: Remove the mentioned user from the queue (must have server kick perms)<br>
+`q!remove <mention>` **-** Remove the mentioned user from the queue (must have server kick perms)<br>
 
-`q!empty`: Empty the queue (must have server kick perms)<br>
+`q!empty` **-** Empty the queue (must have server kick perms)<br>
 
-`q!cap`: Set the capacity of the queue (must have admin perms)<br>
+`q!cap` **-** Set the capacity of the queue (must have admin perms)<br>
 
-`q!tdraft`: Start (or restart) a team draft from the last popped queue<br>
+`q!tdraft` **-** Start (or restart) a team draft from the last popped queue<br>
 
-`q!mdraft`: Start (or restart) a map draft<br>
+`q!mdraft` **-** Start (or restart) a map draft<br>
 
-`q!popflash`: Link the server's designated PopFlash lobby<br>
+`q!popflash` **-** Link the server's designated PopFlash lobby<br>
 
 
 ## Contributions
