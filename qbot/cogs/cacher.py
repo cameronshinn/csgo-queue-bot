@@ -94,4 +94,5 @@ class CacherCog(commands.Cog):
     @commands.Cog.listener()
     async def on_disconenct(self):
         """ Save guild data on disconnect to be reloaded when ready. """
+        self.periodic_save.stop()
         self.save()
