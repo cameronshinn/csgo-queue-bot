@@ -15,6 +15,7 @@ class DblCog(commands.Cog):
         self.bot = bot
         self.dbl_token = dbl_token
         self.dbl_client = dbl.DBLClient(self.bot, self.dbl_token)
+        self.topgg_url = 'https://top.gg/bot/{self.bot.user.id}'
         self.update_stats.start()
 
     @tasks.loop(minutes=60)
