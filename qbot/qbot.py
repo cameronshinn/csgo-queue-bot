@@ -18,7 +18,7 @@ BOT_COLOR = 0x0D61B7
 DATA_PATH = 'guild_data.json'
 
 
-def run(discord_token, dbl_token=None, donate_url=None):
+def run(discord_token, dbl_token=None, donate_url=None, generic=False):
     """ Create the bot, add the cogs and run it. """
     bot = commands.Bot(command_prefix=('q!', 'Q!'), case_insensitive=True)
     bot.add_cog(CacherCog(bot, DATA_PATH))
@@ -26,8 +26,11 @@ def run(discord_token, dbl_token=None, donate_url=None):
     bot.add_cog(HelpCog(bot, BOT_COLOR))
     bot.add_cog(QueueCog(bot, BOT_COLOR))
     bot.add_cog(TeamDraftCog(bot, BOT_COLOR))
-    bot.add_cog(MapDraftCog(bot, BOT_COLOR))
-    bot.add_cog(PopflashCog(bot, BOT_COLOR))
+
+    if not generic:
+        bot.add_cog(MapDraftCog(bot, BOT_COLOR))
+        bot.add_cog(PopflashCog(bot, BOT_COLOR))
+        bot.remove_command('cap')
 
     if dbl_token:
         bot.add_cog(DblCog(bot, dbl_token))

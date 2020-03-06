@@ -82,11 +82,14 @@ class HelpCog(commands.Cog):
     @commands.command(brief='Display basic info about this bot')
     async def info(self, ctx):
         """ Display the info embed. """
-        header = '_The definitive bot for setting up 10-man lobbies_'
-        support_link = '[Join our support server here](https://discordapp.com/invite/tskeyDA)'
-        topgg_link = '[Be sure to upvote the bot on top.gg](https://top.gg/bot/539669626863353868)'
-        github_link = f'[Source code can be found here on GitHub]({GITHUB})'
-        description = f'{header}\n\n{support_link}\n{topgg_link}\n{github_link}'
-        embed = discord.Embed(title='__10-ManQ Queue Bot__', description=description, color=self.color)
+        description = '_The definitive bot for setting up 10-man lobbies_\n'
+        description += '\nJoin the support server [here](https://discordapp.com/invite/tskeyDA)'
+        dbl_cog = self.bot.get_cog('DblCog')
+
+        if dbl_cog:
+            description += f'\nBe sure to upvote the bot on [top.gg]({dbl_cog.topgg_url})'
+
+        description += f'\nSource code can be found [here]({GITHUB}) on GitHub'
+        embed = discord.Embed(title='__10-Man Queue Bot__', description=description, color=self.color)
         embed.set_thumbnail(url=self.logo)
         await ctx.send(embed=embed)
