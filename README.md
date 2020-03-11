@@ -49,6 +49,7 @@ Now you are ready to start using the CS:GO Queue Bot! Try out some of the comman
 `q!empty` **-** Empty the queue (must have server kick perms)<br>
 
 `q!cap <integer>` **-** Set the capacity of the queue to the specified value (must have admin perms)<br>
+*This command is only available when the generic argument is set to true* 
 
 `q!tdraft` **-** Start (or restart) a team draft from the last popped queue<br>
 
