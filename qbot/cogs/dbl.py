@@ -15,6 +15,7 @@ class DblCog(commands.Cog):
         self.dbl_token = dbl_token
         self.dbl_client = dbl.DBLClient(self.bot, self.dbl_token)
         self.topgg_url = 'https://top.gg/bot/{self.bot.user.id}'
+        self.update_stats.start()
 
     @tasks.loop(minutes=60)
     async def update_stats(self):
@@ -27,12 +28,7 @@ class DblCog(commands.Cog):
         except Exception as e:
             raise Exception(f'Failed to post server count {type(e).__name__}\n')
 
-    @commands.Cog.listener()
-    async def on_ready(self):
-        """ Start periodic stat update. """
-        self.update_stats.start()
-
-    @commands.Cog.listener()
-    async def on_disconnect(self):
-        """ Stop periodic stat update. """
-        self.update_stats.stop()
+    @update_stats.before_loop
+    async def before_update_stats(self):
+        """ Wait until bot is ready before posting server count. """
+        await self.bot.wait_until_ready()

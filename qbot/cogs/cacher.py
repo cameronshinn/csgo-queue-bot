@@ -15,6 +15,8 @@ class CacherCog(commands.Cog):
     def __init__(self, bot, guild_data_file):
         self.bot = bot
         self.guild_data_file = guild_data_file
+        self.load()
+        self.periodic_save.start()
 
     def encode(self, obj):
         """ JSON encoding for queue bot objects. """
@@ -85,14 +87,13 @@ class CacherCog(commands.Cog):
         self.save()
         print('Saved guild data')
 
-    @commands.Cog.listener()
-    async def on_ready(self):
-        """ Load guild data and start periodic saving. """
-        self.load()
-        self.periodic_save.start()
+    @periodic_save.before_loop()
+    async def before_periodic_save(self):
+        """ Wait until the bot is ready before attempting to save. """
+        await self.bot.wait_until_ready()
 
     @commands.Cog.listener()
     async def on_disconenct(self):
         """ Save guild data on disconnect to be reloaded when ready. """
-        self.periodic_save.stop()
         self.save()
+        print('Saved guild data')
