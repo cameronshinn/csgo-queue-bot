@@ -8,8 +8,6 @@ import asyncio
 import json
 import os
 
-from .queue import QQueue
-
 
 class CacherCog(commands.Cog):
     """ Cog to handle the caching of guild data. """
