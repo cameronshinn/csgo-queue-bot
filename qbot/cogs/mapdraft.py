@@ -129,3 +129,28 @@ class MapDraftCog(commands.Cog):
                     await msg.edit(embed=embed)
 
                 break
+
+    @commands.command(usage=f'{self.bot.command_prefix[0]}setmp {{+|-}}<map name> ...',
+                      brief='Add or remove maps from the mdraft map pool (Must have admin perms)')
+    @commands.has_permissions(administrator=True)
+    def setmp(self, ctx, *args):
+        """"""
+        if len(args) == 0:
+            pass
+        else:
+            for arg in args:
+                map_name = arg[1:]  # Remove +/- prefix
+                map_obj = next((m for m in map_pool if m.dev_name == map_name), None)
+
+                if arg.startswith('+'):
+                    if map_obj is None:
+                        pass
+                    else:
+                        pass
+                elif arg.startswith('-'):
+                    if map_obj is None:
+                        pass
+                    else:
+                        pass
+                else:
+                    pass
