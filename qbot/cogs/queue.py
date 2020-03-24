@@ -33,16 +33,6 @@ class QueueCog(commands.Cog):
         self.guild_queues = {}  # Maps Guild -> QQueue
         self.color = color
 
-    @property
-    def cache_data(self):
-        """ Property returning guild dict of data for CacherCog. """
-        return self.guild_queues
-
-    @cache_data.setter
-    def cache_data(self, d):
-        """ Setter assigning the guild dict from CacherCog. """
-        self.guild_queues = d
-
     @commands.Cog.listener()
     async def on_ready(self):
         """ Initialize an empty list for each giuld the bot is in. """

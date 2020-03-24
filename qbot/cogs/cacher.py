@@ -4,6 +4,7 @@
 
 import discord
 from discord.ext import commands, tasks
+import asyncio
 import json
 import os
 
@@ -15,82 +16,71 @@ class CacherCog(commands.Cog):
     def __init__(self, bot, guild_data_file):
         self.bot = bot
         self.guild_data_file = guild_data_file
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        """ Load guild data and start saving task. """
+        # Wait for all other discord on_ready event handlers to finish
+        tasks = [t for t in asyncio.Task.all_tasks() if type(t) is discord.client._ClientEventTask]
+        tasks.remove(asyncio.Task.current_task())
+        await asyncio.wait(tasks)
+
+        # Load guild data
+        print("Loading guild data")
         self.load()
-        self.periodic_save.start()
+        print("Loaded guild data")
 
-    def encode(self, obj):
-        """ JSON encoding for queue bot objects. """
-        enc = {'type': type(obj).__name__}
-
-        if type(obj) is discord.User or type(obj) is discord.Member:
-            enc['id'] = obj.id
-        elif type(obj) is QQueue:
-            enc['active'] = [self.encode(user) for user in obj.active]
-            enc['capacity'] = obj.capacity
-            enc['bursted'] = [self.encode(user) for user in obj.bursted]
-        else:
-            raise TypeError(f'Cannot encode {type(obj)} into a JSON format')
-
-        return enc
+        # Start periodic save if it hasn't already begun
+        if self.periodic_save.current_loop == 0:
+            self.periodic_save.start()
 
     def save(self):
         """ Save guild data to JSON. """
-        # Find bot's cogs with 'cache_data' property
-        cache_cogs = [cog for cog in self.bot.cogs.values() if hasattr(cog, 'cache_data')]
+        data = {}
+        queue_cog = self.bot.get_cog('QueueCog')
 
-        data = {}  # Return combined guild dictionary with data from all cogs
-
-        # Construct save dictionary
+        # Save guild data for each guild
         for guild in self.bot.guilds:
-            data[guild.id] = {}
+            guild_queue = queue_cog.guild_queues.get(guild)
+            guild_data = {}
+            guild_data["queue"] = {}
+            guild_data["queue"]["active"] = [user.id for user in guild_queue.active]
+            guild_data["queue"]["bursted"] = [user.id for user in guild_queue.bursted]
+            guild_data["queue"]["capacity"] = guild_queue.capacity
+            data[str(guild.id)] = guild_data
 
-            for cog in cache_cogs:
-                if not cog.cache_data[guild].is_default:  # Check if data is non-default
-                    data[guild.id][type(cog).__name__] = cog.cache_data[guild]
-
-            # Check for guilds with no data to save and remove them
-            if not data[guild.id]:  # Dict is empty
-                data.pop(guild.id)
-
-        # Dump JSON with custom default encoding
-        json.dump(data, open(self.guild_data_file, 'w+'), default=self.encode)
+        json.dump(data, open(self.guild_data_file, 'w+'))  # Dump dict to JSON
 
     def load(self):
         """ Load guild data from JSON. """
         if not os.path.exists(self.guild_data_file):  # Check for guild data file first
             return
 
-        undec = json.load(open(self.guild_data_file, 'r'))  # Read JSON into dictionary
+        queue_cog = self.bot.get_cog('QueueCog')
+        data = json.load(open(self.guild_data_file, 'r'))
 
-        def get_users(users): return [self.bot.get_user(u['id']) for u in users]  # Gets list of users from IDs
+        for guild_id, guild_data in data.items():
+            guild = self.bot.get_guild(int(guild_id))
 
-        for guild_id, guild_data in undec.items():
-            guild = self.bot.get_guild(int(guild_id))  # Get guild from ID
+            if guild is None:
+                continue
 
-            for cog_name, cog_data in guild_data.items():
-                cog = self.bot.get_cog(cog_name)
-                data_type = cog_data['type']  # Every encoding has 'type' field
-                dec = {}  # Initial dict for decoded data
+            guild_queue = queue_cog.guild_queues.get(guild)
 
-                if data_type == 'QQueue':
-                    dec[guild] = QQueue(active=get_users(cog_data['active']),
-                                        capacity=cog_data['capacity'],
-                                        bursted=get_users(cog_data['bursted']))
-                else:
-                    raise TypeError(f'Cannot decode {data_type} from a JSON format.')
+            if guild_queue is None:
+                continue
 
-                cog.cache_data = dec
+            guild_queue.capacity = guild_data["queue"]["capacity"]
+            active = guild_data["queue"]["active"]
+            bursted = guild_data["queue"]["bursted"]
+            guild_queue.active = [self.bot.get_user(id) for id in active if self.bot.get_user(id)]
+            guild_queue.bursted = [self.bot.get_user(id) for id in bursted if self.bot.get_user(id)]
 
-    @tasks.loop(minutes=10)
+    @tasks.loop(seconds=10)  # TODO: Set back to 10 minutes
     async def periodic_save(self):
         """ Save guild data periodically. """
         self.save()
         print('Saved guild data')
-
-    @periodic_save.before_loop()
-    async def before_periodic_save(self):
-        """ Wait until the bot is ready before attempting to save. """
-        await self.bot.wait_until_ready()
 
     @commands.Cog.listener()
     async def on_disconenct(self):
