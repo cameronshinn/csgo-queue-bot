@@ -74,7 +74,7 @@ class CacherCog(commands.Cog):
             guild_queue.active = [self.bot.get_user(id) for id in active if self.bot.get_user(id)]
             guild_queue.bursted = [self.bot.get_user(id) for id in bursted if self.bot.get_user(id)]
 
-    @tasks.loop(seconds=10)  # TODO: Set back to 10 minutes
+    @tasks.loop(minutes=10)
     async def periodic_save(self):
         """ Save guild data periodically. """
         self.save()
