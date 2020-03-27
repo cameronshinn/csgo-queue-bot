@@ -170,24 +170,58 @@ class MapDraftCog(commands.Cog):
     @commands.command(usage='q!setmp {+|-}<map name> ...',
                       brief='Add or remove maps from the mdraft map pool (Must have admin perms)')
     @commands.has_permissions(administrator=True)
-    def setmp(self, ctx, *args):
+    async def setmp(self, ctx, *args):
         """"""
+        mdraft_data = self.guild_mdraft_data[ctx.guild]
+
         if len(args) == 0:
-            pass
+            embed = discord.Embed(title='Current map pool', color=self.color)
         else:
+            original_mp = mdraft_data.map_pool.copy()  # Save map pool copy incase outcome state is invalid
+            description = ''
+            any_wrong_arg = False  # Indicates if the command was used correctly
+
             for arg in args:
                 map_name = arg[1:]  # Remove +/- prefix
-                map_obj = next((m for m in map_pool if m.dev_name == map_name), None)
+                map_obj = next((m for m in ALL_MAPS if m.dev_name == map_name), None)
 
-                if arg.startswith('+'):
-                    if map_obj is None:
-                        pass
-                    else:
-                        pass
-                elif arg.startswith('-'):
-                    if map_obj is None:
-                        pass
-                    else:
-                        pass
-                else:
-                    pass
+                if map_obj is None:
+                    description += f'\u2022 Could not interpret `{arg}`\n'
+                    any_wrong_arg = True
+                    continue
+
+                if arg.startswith('+'):  # Add map
+                    mdraft_data.map_pool = [m for m in ALL_MAPS if m in mdraft_data.map_pool or m.dev_name == map_name]
+                    description += f'\u2022 Added `{map_name}`\n'
+                elif arg.startswith('-'):  # Remove map
+                    mdraft_data.map_pool = [m for m in mdraft_data.map_pool if m.dev_name != map_name]
+                    description += f'\u2022 Removed `{map_name}`\n'
+
+            if len(mdraft_data.map_pool) < 3:
+                mdraft_data.map_pool = original_mp
+                description = 'Pool cannot have fewer than 3 maps!'
+
+            embed = discord.Embed(title='Modified map pool', description=description, color=self.color)
+
+            if any_wrong_arg:  # Add example usage footer if command was used incorrectly
+                embed.set_footer(text=f'Ex: {self.bot.command_prefix[0]}setmp +de_cache -de_mirage')
+
+        active_maps = ''.join(f'{m.emoji}  `{m.dev_name}`\n' for m in mdraft_data.map_pool)
+        inactive_maps = ''.join(f'{m.emoji}  `{m.dev_name}`\n' for m in ALL_MAPS if m not in mdraft_data.map_pool)
+
+        if not inactive_maps:
+            inactive_maps = '*None*'
+
+        embed.add_field(name='__Active Maps__', value=active_maps)
+        embed.add_field(name='__Inactive Maps__', value=inactive_maps)
+        await ctx.send(embed=embed)
+
+    @setmp.error
+    async def setmp_error(self, ctx, error):
+        """ Respond to a permissions error with an explanation message. """
+        if isinstance(error, commands.MissingPermissions):
+            await ctx.trigger_typing()
+            missing_perm = error.missing_perms[0].replace('_', ' ')
+            title = f'Cannot set the map pool without {missing_perm} permission!'
+            embed = discord.Embed(title=title, color=self.color)
+            await ctx.send(embed=embed)
