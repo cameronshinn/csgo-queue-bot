@@ -19,7 +19,7 @@ class DonateCog(commands.Cog):
         """ Trigger typing at the start of every command. """
         await ctx.trigger_typing()
 
-    @commands.command(brief='Link the server\'s designated Donation link')
+    @commands.command(brief='Link the server\'s designated donation link')
     async def donate(self, ctx):
         description = f'[Click here to donate]({self.donate_url})'
         embed = discord.Embed(title="Donations are greatly appreciated!", description=description, color=self.color)
