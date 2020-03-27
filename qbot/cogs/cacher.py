@@ -2,6 +2,7 @@
 # cacher.py
 # cameronshinn
 
+from . import mapdraft
 import discord
 from discord.ext import commands, tasks
 import asyncio
@@ -24,9 +25,9 @@ class CacherCog(commands.Cog):
         await asyncio.wait(tasks)
 
         # Load guild data
-        print("Loading guild data")
+        print('Loading guild data...')
         self.load()
-        print("Loaded guild data")
+        print('Loaded guild data')
 
         # Start periodic save if it hasn't already begun
         if self.periodic_save.current_loop == 0:
@@ -36,15 +37,19 @@ class CacherCog(commands.Cog):
         """ Save guild data to JSON. """
         data = {}
         queue_cog = self.bot.get_cog('QueueCog')
+        mapdraft_cog = self.bot.get_cog('MapDraftCog')
 
         # Save guild data for each guild
         for guild in self.bot.guilds:
             guild_queue = queue_cog.guild_queues.get(guild)
+            guild_mdraft = mapdraft_cog.guild_mdraft_data.get(guild)
             guild_data = {}
-            guild_data["queue"] = {}
-            guild_data["queue"]["active"] = [user.id for user in guild_queue.active]
-            guild_data["queue"]["bursted"] = [user.id for user in guild_queue.bursted]
-            guild_data["queue"]["capacity"] = guild_queue.capacity
+            guild_data['queue'] = {}
+            guild_data['queue']['active'] = [user.id for user in guild_queue.active]
+            guild_data['queue']['bursted'] = [user.id for user in guild_queue.bursted]
+            guild_data['queue']['capacity'] = guild_queue.capacity
+            guild_data['mdraft'] = {}
+            guild_data['mdraft']['map_pool'] = [m.dev_name for m in guild_mdraft.map_pool]
             data[str(guild.id)] = guild_data
 
         json.dump(data, open(self.guild_data_file, 'w+'))  # Dump dict to JSON
@@ -55,6 +60,7 @@ class CacherCog(commands.Cog):
             return
 
         queue_cog = self.bot.get_cog('QueueCog')
+        mapdraft_cog = self.bot.get_cog('MapDraftCog')
         data = json.load(open(self.guild_data_file, 'r'))
 
         for guild_id, guild_data in data.items():
@@ -64,15 +70,18 @@ class CacherCog(commands.Cog):
                 continue
 
             guild_queue = queue_cog.guild_queues.get(guild)
+            guild_mdraft = mapdraft_cog.guild_mdraft_data.get(guild)
 
-            if guild_queue is None:
-                continue
+            if guild_queue and 'queue' in guild_data:
+                guild_queue.capacity = guild_data['queue']['capacity']
+                active = guild_data['queue']['active']
+                bursted = guild_data['queue']['bursted']
+                guild_queue.active = [self.bot.get_user(id) for id in active if self.bot.get_user(id)]
+                guild_queue.bursted = [self.bot.get_user(id) for id in bursted if self.bot.get_user(id)]
 
-            guild_queue.capacity = guild_data["queue"]["capacity"]
-            active = guild_data["queue"]["active"]
-            bursted = guild_data["queue"]["bursted"]
-            guild_queue.active = [self.bot.get_user(id) for id in active if self.bot.get_user(id)]
-            guild_queue.bursted = [self.bot.get_user(id) for id in bursted if self.bot.get_user(id)]
+            if guild_mdraft and 'mdraft' in guild_data:
+                all_maps = mapdraft.ALL_MAPS
+                guild_mdraft.map_pool = [m for m in all_maps if m.dev_name in guild_data['mdraft']['map_pool']]
 
     @tasks.loop(minutes=10)
     async def periodic_save(self):
