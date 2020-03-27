@@ -26,8 +26,8 @@ class HelpCog(commands.Cog):
 
         for cog in self.bot.cogs:  # Uset bot.cogs instead of bot.commands to control ordering in the help embed
             for cmd in self.bot.get_cog(cog).get_commands():
-                if cmd.name == 'remove':
-                    embed.add_field(name=f'**{cmd.usage}**', value=f'_{cmd.brief}_', inline=False)
+                if cmd.usage:  # Command has usage attribute set
+                    embed.add_field(name=f'**{prefix}{cmd.usage}**', value=f'_{cmd.brief}_', inline=False)
                 else:
                     embed.add_field(name=f'**{prefix}{cmd.name}**', value=f'_{cmd.brief}_', inline=False)
 

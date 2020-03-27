@@ -167,7 +167,7 @@ class MapDraftCog(commands.Cog):
 
                 break
 
-    @commands.command(usage='q!setmp {+|-}<map name> ...',
+    @commands.command(usage='setmp {+|-}<map name> ...',
                       brief='Add or remove maps from the mdraft map pool (Must have admin perms)')
     @commands.has_permissions(administrator=True)
     async def setmp(self, ctx, *args):

@@ -35,7 +35,7 @@ class QueueCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        """ Initialize an empty list for each giuld the bot is in. """
+        """ Initialize an empty list for each guild the bot is in. """
         for guild in self.bot.guilds:
             if guild not in self.guild_queues:  # Don't add empty queue if guild already loaded
                 self.guild_queues[guild] = QQueue()
@@ -149,7 +149,7 @@ class QueueCog(commands.Cog):
 
         queue.last_msg = await ctx.send(embed=embed)
 
-    @commands.command(usage='q!remove <user mention>',
+    @commands.command(usage='remove <user mention>',
                       brief='Remove the mentioned user from the queue (must have server kick perms)')
     @commands.has_permissions(kick_members=True)
     async def remove(self, ctx):
