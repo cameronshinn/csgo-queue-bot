@@ -48,8 +48,11 @@ class CacherCog(commands.Cog):
             guild_data['queue']['active'] = [user.id for user in guild_queue.active]
             guild_data['queue']['bursted'] = [user.id for user in guild_queue.bursted]
             guild_data['queue']['capacity'] = guild_queue.capacity
-            guild_data['mdraft'] = {}
-            guild_data['mdraft']['map_pool'] = [m.dev_name for m in guild_mdraft.map_pool]
+
+            if mapdraft_cog:
+                guild_data['mdraft'] = {}
+                guild_data['mdraft']['map_pool'] = [m.dev_name for m in guild_mdraft.map_pool]
+
             data[str(guild.id)] = guild_data
 
         json.dump(data, open(self.guild_data_file, 'w+'))  # Dump dict to JSON
@@ -70,7 +73,6 @@ class CacherCog(commands.Cog):
                 continue
 
             guild_queue = queue_cog.guild_queues.get(guild)
-            guild_mdraft = mapdraft_cog.guild_mdraft_data.get(guild)
 
             if guild_queue and 'queue' in guild_data:
                 guild_queue.capacity = guild_data['queue']['capacity']
@@ -78,6 +80,11 @@ class CacherCog(commands.Cog):
                 bursted = guild_data['queue']['bursted']
                 guild_queue.active = [self.bot.get_user(id) for id in active if self.bot.get_user(id)]
                 guild_queue.bursted = [self.bot.get_user(id) for id in bursted if self.bot.get_user(id)]
+
+            if mapdraft_cog:  # Generic bot version doesn't have MapDraft cog
+                guild_mdraft = mapdraft_cog.guild_mdraft_data.get(guild)
+            else:
+                continue
 
             if guild_mdraft and 'mdraft' in guild_data:
                 all_maps = mapdraft.ALL_MAPS
