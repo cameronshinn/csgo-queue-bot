@@ -130,7 +130,7 @@ class MapDraftCog(commands.Cog):
 
                 break
 
-    @commands.command(usage=f'{self.bot.command_prefix[0]}setmp {{+|-}}<map name> ...',
+    @commands.command(usage='q!setmp {+|-}<map name> ...',
                       brief='Add or remove maps from the mdraft map pool (Must have admin perms)')
     @commands.has_permissions(administrator=True)
     def setmp(self, ctx, *args):

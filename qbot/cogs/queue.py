@@ -149,7 +149,7 @@ class QueueCog(commands.Cog):
 
         queue.last_msg = await ctx.send(embed=embed)
 
-    @commands.command(usage=f'{self.bot.command_prefix[0]}remove <user mention>',
+    @commands.command(usage='q!remove <user mention>',
                       brief='Remove the mentioned user from the queue (must have server kick perms)')
     @commands.has_permissions(kick_members=True)
     async def remove(self, ctx):
