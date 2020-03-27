@@ -11,13 +11,13 @@ from .queue import QueueCog
 from .teamdraft import TeamDraftCog
 
 __all__ = [
-   CacherCog,
-   ConsoleCog,
-   DblCog,
-   DonateCog,
-   HelpCog,
-   MapDraftCog,
-   PopflashCog,
-   QueueCog,
-   TeamDraftCog
+    CacherCog,
+    ConsoleCog,
+    DblCog,
+    DonateCog,
+    HelpCog,
+    MapDraftCog,
+    PopflashCog,
+    QueueCog,
+    TeamDraftCog
 ]
