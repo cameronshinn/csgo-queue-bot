@@ -112,7 +112,7 @@ class QueueCog(commands.Cog):
 
             queue.last_msg = await ctx.send(embed=embed)
 
-    @commands.command(brief='Leave the queue')
+    @commands.command(brief='Leave the queue (or the bursted queue)')
     async def leave(self, ctx):
         """ Check if the member can be remobed from the guild and remove them if so. """
         queue = self.guild_queues[ctx.guild]
