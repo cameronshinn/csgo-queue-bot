@@ -1,6 +1,4 @@
-#!/usr/bin/env python3
 # cacher.py
-# cameronshinn
 
 from . import mapdraft
 import discord

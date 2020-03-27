@@ -1,6 +1,4 @@
-#!/usr/bin/env python3
 # __init__.py
-# cameronshinn
 
 from .cacher import CacherCog
 from .console import ConsoleCog

@@ -1,6 +1,4 @@
-#!/usr/bin/env python3
 # qbot.py
-# cameronshinn
 
 from discord.ext import commands
 import cogs

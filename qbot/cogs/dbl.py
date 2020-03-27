@@ -1,6 +1,4 @@
-#!/usr/bin/env python3
 # dbl.py
-# cameronshinn
 
 import dbl
 from discord.ext import commands, tasks

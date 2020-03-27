@@ -1,6 +1,4 @@
-#!/usr/bin/env python3
 # help.py
-# cameronshinn
 
 import discord
 from discord.ext import commands
