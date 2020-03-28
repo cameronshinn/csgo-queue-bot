@@ -8,7 +8,7 @@ class DblCog(commands.Cog):
     """ Handles interactions with the Discord Bot Library API. """
 
     def __init__(self, bot, dbl_token):
-        """ Set attrivutes and get DBL client object. """
+        """ Set attributes and get DBL client object. """
         self.bot = bot
         self.dbl_token = dbl_token
         self.dbl_client = dbl.DBLClient(self.bot, self.dbl_token)
