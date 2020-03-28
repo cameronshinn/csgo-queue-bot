@@ -55,8 +55,11 @@ Now you are ready to start using the CS:GO Queue Bot! Try out some of the comman
 
 `q!mdraft` **-** Start (or restart) a map draft<br>
 
+`q!setmp {+|-}<map name> ...` **-** Add or remove maps from the mdraft map pool (Must have admin perms)<br>
+
 `q!popflash` **-** Link the server's designated PopFlash lobby<br>
 
+`q!donate` **-** Link the bot's donation link<br>
 
 ## Contributions
 
