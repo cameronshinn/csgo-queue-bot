@@ -1,3 +1,5 @@
+**DEPRECATED**: DEVELOPMENT CONTINUING [HERE](https://github.com/csgo-league/csgo-league-bot)
+
 <img src="assets/logo/rounded-logo.png" alt="10-Man Queues" align="right" width="50" height="50"/>
 
 # CS:GO Queue Bot &ensp; [![Discord Bots](https://top.gg/api/widget/status/539669626863353868.svg?noavatar=true)](https://top.gg/bot/539669626863353868) [![Discord Bots](https://top.gg/api/widget/servers/539669626863353868.svg?noavatar=true)](https://top.gg/bot/539669626863353868)
