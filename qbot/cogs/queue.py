@@ -137,7 +137,7 @@ class QueueCog(commands.Cog):
     async def view(self, ctx):
         """  Display the queue as an embed list of mentioned names. """
         queue = self.guild_queues[ctx.guild]
-        embed = self.queue_embed(ctx.guild, 'Players in queue for 10-mans')
+        embed = self.queue_embed(ctx.guild, 'Players in queue')
 
         if queue.last_msg:
             try:
