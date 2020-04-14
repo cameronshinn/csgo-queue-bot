@@ -53,7 +53,8 @@ class CacherCog(commands.Cog):
 
             data[str(guild.id)] = guild_data
 
-        json.dump(data, open(self.guild_data_file, 'w+'))  # Dump dict to JSON
+        with open(self.guild_data_file, 'w+') as f:
+            json.dump(data, f)  # Dump dict to JSON
 
     def load(self):
         """ Load guild data from JSON. """
