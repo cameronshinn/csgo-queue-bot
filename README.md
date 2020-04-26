@@ -27,8 +27,7 @@ This script uses the Discord Python API via a bot to manage queues of CS:GO play
 import qbot
 
 DISCORD_TOKEN = 'XXXXXXXX'
-DBL_TOKEN = 'XXXXXXXX'
-qbot.run(discord_token=DISCORD_TOKEN, dbl_token=DBL_TOKEN)
+qbot.run(discord_token=DISCORD_TOKEN)
 ```
 
 Now you are ready to start using the CS:GO Queue Bot! Try out some of the commands to make sure it works.
