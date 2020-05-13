@@ -19,7 +19,6 @@ def run(discord_token, dbl_token=None, donate_url=None, generic=False):
     if not generic:
         bot.add_cog(cogs.MapDraftCog(bot, BOT_COLOR))
         bot.add_cog(cogs.PopflashCog(bot, BOT_COLOR))
-        bot.remove_command('cap')
 
     if dbl_token:
         bot.add_cog(cogs.DblCog(bot, dbl_token))
